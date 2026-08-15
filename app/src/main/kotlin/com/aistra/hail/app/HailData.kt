@@ -93,6 +93,7 @@ object HailData {
     const val THEME_DARK = "theme_dark"
     val APP_THEME_VALUES = listOf(FOLLOW_SYSTEM, THEME_LIGHT, THEME_DARK)
     const val CALENDAR_DISGUISE = "calendar_disguise"
+    const val ICONLESS_LAUNCHER_ENABLED = "iconless_launcher_enabled"
     const val ICON_PACK = "icon_pack"
     const val GRAYSCALE_ICON = "grayscale_icon"
     const val COMPACT_ICON = "compact_icon"
@@ -140,6 +141,7 @@ object HailData {
     val workingMode get() = sp.getString(WORKING_MODE, MODE_DEFAULT)!!
     val biometricLogin get() = sp.getBoolean(BIOMETRIC_LOGIN, false)
     val calendarDisguise get() = sp.getBoolean(CALENDAR_DISGUISE, true)
+    val iconlessLauncherEnabled get() = sp.getBoolean(ICONLESS_LAUNCHER_ENABLED, false)
     val appTheme get() = sp.getString(APP_THEME, FOLLOW_SYSTEM)!!
     val iconPack get() = sp.getString(ICON_PACK, ACTION_NONE)!!
     val grayscaleIcon get() = sp.getBoolean(GRAYSCALE_ICON, true)
@@ -161,6 +163,7 @@ object HailData {
     private val dir = "${app.filesDir.path}/v1"
     private val appsPath = "$dir/apps.json"
     private val tagsPath = "$dir/tags.json"
+    private val iconlessLauncherPath = "$dir/iconless_launcher.json"
 
     val checkedList: MutableList<AppInfo> by lazy {
         mutableListOf<AppInfo>().apply {
@@ -233,7 +236,43 @@ object HailData {
         })
     }
 
+    val iconlessLauncherEntries: MutableList<IconlessLauncherEntry> by lazy {
+        mutableListOf<IconlessLauncherEntry>().apply {
+            runCatching {
+                val json = JSONArray(HFiles.read(iconlessLauncherPath))
+                for (i in 0 until json.length()) {
+                    add(with(json.getJSONObject(i)) {
+                        val components = getJSONArray("components")
+                        IconlessLauncherEntry(
+                            packageName = getString(KEY_PACKAGE),
+                            components = List(components.length()) { index -> components.getString(index) }
+                        )
+                    })
+                }
+            }
+        }
+    }
+
+    fun saveIconlessLauncherEntries() {
+        if (!HFiles.exists(dir)) HFiles.createDirectories(dir)
+        HFiles.write(iconlessLauncherPath, JSONArray().run {
+            iconlessLauncherEntries.forEach {
+                put(
+                    JSONObject()
+                        .put(KEY_PACKAGE, it.packageName)
+                        .put("components", JSONArray(it.components))
+                )
+            }
+            toString()
+        })
+    }
+
     fun changeAppsSort(sort: String) = sp.edit { putString(SORT_BY, sort) }
 
     fun changeAppsFilter(filter: String, enabled: Boolean) = sp.edit { putBoolean(filter, enabled) }
 }
+
+data class IconlessLauncherEntry(
+    val packageName: String,
+    val components: List<String>
+)

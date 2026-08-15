@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         biometricPrompt.authenticate(promptInfo)
     }
 
-    private fun initView() = ActivityMainBinding.inflate(layoutInflater).apply {
+    private fun initView() = ActivityMainBinding.inflate(layoutInflater).also { binding = it }.apply {
         setContentView(root)
         setSupportActionBar(appBarMain.toolbar)
         fab = appBarMain.fab
@@ -72,11 +72,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val navController = navHostFragment.navController
         navController.addOnDestinationChangedListener(this@MainActivity)
         val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.nav_home, R.id.nav_apps, R.id.nav_settings, R.id.nav_about
+            R.id.nav_home, R.id.nav_launcher, R.id.nav_apps, R.id.nav_settings, R.id.nav_about
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNav?.setupWithNavController(navController)
         navRail?.setupWithNavController(navController)
+        updateLauncherNavigation(HailData.iconlessLauncherEnabled)
 
         val isRtl = isRtl
         val isLandscape = isLandscape
@@ -109,12 +110,25 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun onDestinationChanged(
         controller: NavController, destination: NavDestination, arguments: Bundle?
     ) {
-        fab.tag = destination.id == R.id.nav_home
+        val isHome = destination.id == R.id.nav_home
+        val isLauncher = destination.id == R.id.nav_launcher
+        fab.tag = isHome || isLauncher
+        fab.setIconResource(if (isLauncher) R.drawable.ic_round_add else R.drawable.ic_round_frozen)
+        fab.contentDescription = getString(
+            if (isLauncher) R.string.action_add_launcher_app else R.string.action_freeze_all
+        )
         if (fab.tag == true) fab.show() else fab.hide()
+    }
+
+    fun updateLauncherNavigation(enabled: Boolean) {
+        binding.bottomNav?.menu?.findItem(R.id.nav_launcher)?.isVisible = enabled
+        binding.navRail?.menu?.findItem(R.id.nav_launcher)?.isVisible = enabled
     }
 
     override fun onDestroy() {
         if (!isChangingConfigurations) DisguiseSession.unlocked = false
         super.onDestroy()
     }
+
+    private lateinit var binding: ActivityMainBinding
 }

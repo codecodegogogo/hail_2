@@ -4,6 +4,7 @@
     <string name="app_name">雹</string>
     <string name="app_slogan">实现冻结自由！</string>
     <string name="title_home">首页</string>
+    <string name="title_launcher">启动器</string>
     <string name="title_apps">应用</string>
     <string name="title_settings">设置</string>
     <string name="title_about">关于</string>
@@ -102,6 +103,15 @@
     <string name="skip_foreground_app">保留前台应用</string>
     <string name="title_customize">自定义</string>
     <string name="calendar_disguise">启用日历隐藏</string>
+    <string name="title_iconless_launcher">无图标应用启动器</string>
+    <string name="iconless_launcher_enabled">是否启用</string>
+    <string name="iconless_launcher_empty">尚未添加应用</string>
+    <string name="iconless_launcher_no_apps">没有可添加的应用</string>
+    <string name="iconless_launcher_delete_mode">删除应用</string>
+    <string name="iconless_launcher_operation_failed">当前工作模式无法更改应用的桌面图标</string>
+    <string name="iconless_launcher_launch_failed">无法启动此应用</string>
+    <string name="action_add_launcher_app">添加应用</string>
+    <string name="action_remove_launcher">移除应用</string>
     <string name="grayscale_icon">灰度图标</string>
     <string name="compact_icon">紧凑图标</string>
     <string name="action_biometric">生物识别登录</string>

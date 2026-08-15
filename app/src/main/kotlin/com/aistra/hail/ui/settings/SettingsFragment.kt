@@ -41,6 +41,7 @@ import com.aistra.hail.R
 import com.aistra.hail.app.AppManager
 import com.aistra.hail.app.HailApi
 import com.aistra.hail.app.HailData
+import com.aistra.hail.app.IconlessLauncherManager
 import com.aistra.hail.databinding.DialogInputBinding
 import com.aistra.hail.ui.main.MainActivity
 import com.aistra.hail.ui.main.MainFragment
@@ -191,6 +192,29 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 entriesId = R.array.tile_action_entries,
                 titleId = R.string.tile_action,
                 icon = Icons.Outlined.DashboardCustomize
+            )
+            horizontalDivider()
+            preferenceCategory(
+                key = "iconless_launcher",
+                title = { Text(text = stringResource(R.string.title_iconless_launcher)) }
+            )
+            switchPreference(
+                key = HailData.ICONLESS_LAUNCHER_ENABLED,
+                defaultValue = false,
+                onValueChange = { state, value ->
+                    lifecycleScope.launch {
+                        val success = withContext(Dispatchers.IO) {
+                            IconlessLauncherManager.setFeatureEnabled(value)
+                        }
+                        if (success) {
+                            state.value = value
+                            activity.updateLauncherNavigation(value)
+                        } else HUI.showToast(R.string.iconless_launcher_operation_failed)
+                    }
+                    false
+                },
+                titleId = R.string.iconless_launcher_enabled,
+                icon = null
             )
             horizontalDivider()
             preferenceCategory(key = "auto_freeze", title = { Text(text = stringResource(R.string.auto_freeze)) })
