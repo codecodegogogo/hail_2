@@ -109,6 +109,7 @@
     <string name="skip_while_charging">Skip while charging</string>
     <string name="skip_foreground_app">Skip foreground app</string>
     <string name="title_customize">Customize</string>
+    <string name="calendar_disguise">Enable calendar disguise</string>
     <string name="grayscale_icon">Grayscale icon</string>
     <string name="compact_icon">Compact icon</string>
     <string name="action_biometric">Biometric login</string>

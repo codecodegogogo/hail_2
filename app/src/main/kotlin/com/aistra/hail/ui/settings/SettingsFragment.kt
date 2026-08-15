@@ -1,5 +1,6 @@
 package com.aistra.hail.ui.settings
 
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -9,7 +10,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
@@ -27,6 +30,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -100,6 +104,16 @@ class SettingsFragment : MainFragment(), MenuProvider {
             )
             horizontalDivider()
             preferenceCategory(key = "customize", title = { Text(text = stringResource(R.string.title_customize)) })
+            switchPreference(
+                key = HailData.CALENDAR_DISGUISE,
+                defaultValue = true,
+                onValueChange = { _, value ->
+                    setCalendarDisguiseEnabled(value)
+                    true
+                },
+                titleId = R.string.calendar_disguise,
+                icon = null
+            )
             listPreference(
                 key = HailData.APP_THEME,
                 defaultValue = HailData.FOLLOW_SYSTEM,
@@ -272,7 +286,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
         onValueChange: (MutableState<Boolean>, Boolean) -> Boolean = { _, _ -> true },
         @StringRes titleId: Int,
         enabled: Boolean = true,
-        icon: ImageVector,
+        icon: ImageVector?,
     ) = item(key = titleId, contentType = "SwitchPreference") {
         val state = rememberState()
         SwitchPreference(
@@ -280,7 +294,10 @@ class SettingsFragment : MainFragment(), MenuProvider {
             onValueChange = { if (onValueChange(state, it)) state.value = it },
             title = { Text(text = stringResource(titleId)) },
             enabled = enabled,
-            icon = { Icon(imageVector = icon, contentDescription = null) })
+            icon = {
+                if (icon != null) Icon(imageVector = icon, contentDescription = null)
+                else Spacer(modifier = Modifier.size(24.dp))
+            })
     }
 
     private fun LazyListScope.switchPreference(
@@ -289,7 +306,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
         onValueChange: (MutableState<Boolean>, Boolean) -> Boolean = { _, _ -> true },
         @StringRes titleId: Int,
         enabled: Boolean = true,
-        icon: ImageVector,
+        icon: ImageVector?,
     ) = switchPreference(
         rememberState = { rememberPreferenceState(key, defaultValue) },
         onValueChange = onValueChange,
@@ -347,6 +364,28 @@ class SettingsFragment : MainFragment(), MenuProvider {
     private fun resetDynamicShortcuts() {
         HShortcuts.removeAllDynamicShortcuts()
         HShortcuts.addDynamicShortcutAction(HailData.dynamicShortcutAction)
+    }
+
+    private fun setCalendarDisguiseEnabled(enabled: Boolean) {
+        val packageManager = requireContext().packageManager
+        val calendarLauncher = ComponentName(
+            requireContext(), "com.aistra.hail.ui.calendar.CalendarLauncher"
+        )
+        val hailLauncher = ComponentName(
+            requireContext(), "com.aistra.hail.ui.main.HailLauncher"
+        )
+        val launcherToEnable = if (enabled) calendarLauncher else hailLauncher
+        val launcherToDisable = if (enabled) hailLauncher else calendarLauncher
+        packageManager.setComponentEnabledSetting(
+            launcherToEnable,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+        packageManager.setComponentEnabledSetting(
+            launcherToDisable,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
     }
 
     private fun iconPackName(pack: String): String = if (pack == HailData.ACTION_NONE) getString(R.string.action_none)

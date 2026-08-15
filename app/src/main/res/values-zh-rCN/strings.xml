@@ -101,6 +101,7 @@
     <string name="skip_while_charging">充电时例外</string>
     <string name="skip_foreground_app">保留前台应用</string>
     <string name="title_customize">自定义</string>
+    <string name="calendar_disguise">启用日历隐藏</string>
     <string name="grayscale_icon">灰度图标</string>
     <string name="compact_icon">紧凑图标</string>
     <string name="action_biometric">生物识别登录</string>

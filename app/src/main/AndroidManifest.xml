@@ -34,7 +34,7 @@
             android:allowBackup="true"
             android:enableOnBackInvokedCallback="true"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/calendar_name"
+            android:label="@string/app_name"
             android:description="@string/xposed_description"
             android:supportsRtl="true"
             android:theme="@style/Theme.Hail"
@@ -49,15 +49,35 @@
                 android:label="@string/calendar_name"
                 android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.ASSIST"/>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity-alias
+                android:name="com.aistra.hail.ui.calendar.CalendarLauncher"
+                android:enabled="true"
+                android:exported="true"
+                android:icon="@mipmap/ic_launcher"
+                android:label="@string/calendar_name"
+                android:targetActivity=".ui.calendar.CalendarActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+                android:name="com.aistra.hail.ui.main.HailLauncher"
+                android:enabled="false"
+                android:exported="true"
+                android:icon="@mipmap/ic_launcher"
+                android:label="@string/app_name"
+                android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
         <activity
                 android:name=".ui.api.ApiActivity"
                 android:excludeFromRecents="true"

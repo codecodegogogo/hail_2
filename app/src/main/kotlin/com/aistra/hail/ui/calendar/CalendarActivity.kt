@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.aistra.hail.app.DisguiseSession
+import com.aistra.hail.app.HailData
 import com.aistra.hail.ui.main.MainActivity
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
@@ -69,7 +70,7 @@ import java.util.Locale
 class CalendarActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (DisguiseSession.unlocked) {
+        if (!HailData.calendarDisguise || DisguiseSession.unlocked) {
             openHail()
             return
         }
