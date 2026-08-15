@@ -67,25 +67,9 @@ object HailData {
     const val MODE_ISLAND_SUSPEND = ISLAND + SUSPEND
     const val MODE_PRIVAPP_STOP = PRIVAPP + STOP
     const val MODE_PRIVAPP_DISABLE = PRIVAPP + DISABLE
-    val WORKING_MODE_VALUES = listOf(
-        MODE_DEFAULT,
-        MODE_SHIZUKU_STOP,
-        MODE_SHIZUKU_DISABLE,
-        MODE_SHIZUKU_HIDE,
-        MODE_SHIZUKU_SUSPEND,
-        MODE_SU_STOP,
-        MODE_SU_DISABLE,
-        MODE_SU_HIDE,
-        MODE_SU_SUSPEND,
-        MODE_DHIZUKU_HIDE,
-        MODE_DHIZUKU_SUSPEND,
-        MODE_OWNER_HIDE,
-        MODE_OWNER_SUSPEND,
-        MODE_ISLAND_HIDE,
-        MODE_ISLAND_SUSPEND,
-        MODE_PRIVAPP_STOP,
-        MODE_PRIVAPP_DISABLE
-    )
+    // The stored value remains permission + action so existing installs and execution dispatch stay compatible.
+    val WORKING_PERMISSION_VALUES = listOf(MODE_DEFAULT, SHIZUKU, SU, DHIZUKU, OWNER, ISLAND, PRIVAPP)
+    private val WORKING_ACTION_VALUES = listOf(STOP, DISABLE, HIDE, SUSPEND)
     const val BIOMETRIC_LOGIN = "biometric_login"
     const val APP_THEME = "app_theme"
     const val FOLLOW_SYSTEM = "follow_system"
@@ -121,6 +105,28 @@ object HailData {
     val skipWhileCharging get() = sp.getBoolean(SKIP_WHILE_CHARGING, false)
     val skipForegroundApp get() = sp.getBoolean(SKIP_FOREGROUND_APP, false)
     val skipNotifyingApp get() = sp.getBoolean(SKIP_NOTIFYING_APP, false)
+
+    fun workingPermission(mode: String): String =
+        WORKING_PERMISSION_VALUES.drop(1).firstOrNull { mode.startsWith(it) } ?: MODE_DEFAULT
+
+    fun supportedWorkingActions(permission: String): List<String> = when (permission) {
+        SHIZUKU, SU -> WORKING_ACTION_VALUES
+        DHIZUKU, OWNER, ISLAND -> listOf(HIDE, SUSPEND)
+        PRIVAPP -> listOf(STOP, DISABLE)
+        else -> emptyList()
+    }
+
+    fun workingAction(mode: String): String {
+        val actions = supportedWorkingActions(workingPermission(mode))
+        return actions.firstOrNull { mode.endsWith(it) } ?: MODE_DEFAULT
+    }
+
+    fun combineWorkingMode(permission: String, preferredAction: String): String {
+        val actions = supportedWorkingActions(permission)
+        if (actions.isEmpty()) return MODE_DEFAULT
+        val action = preferredAction.takeIf { it in actions } ?: actions.first()
+        return permission + action
+    }
 
     private val dir = "${app.filesDir.path}/v1"
     private val appsPath = "$dir/apps.json"

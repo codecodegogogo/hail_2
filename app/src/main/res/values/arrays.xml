@@ -28,24 +28,14 @@
         <item>@string/action_extract_apk</item>
         <item>@string/action_uninstall</item>
     </string-array>
-    <string-array name="working_mode_entries">
+    <string-array name="working_permission_entries">
         <item>@string/mode_default</item>
-        <item>@string/mode_shizuku_stop</item>
-        <item>@string/mode_shizuku_disable</item>
-        <item>@string/mode_shizuku_hide</item>
-        <item>@string/mode_shizuku_suspend</item>
-        <item>@string/mode_su_stop</item>
-        <item>@string/mode_su_disable</item>
-        <item>@string/mode_su_hide</item>
-        <item>@string/mode_su_suspend</item>
-        <item>@string/mode_dhizuku_hide</item>
-        <item>@string/mode_dhizuku_suspend</item>
-        <item>@string/mode_owner_hide</item>
-        <item>@string/mode_owner_suspend</item>
-        <item>@string/mode_island_hide</item>
-        <item>@string/mode_island_suspend</item>
-        <item>@string/mode_privapp_stop</item>
-        <item>@string/mode_privapp_disable</item>
+        <item>@string/working_permission_shizuku</item>
+        <item>@string/working_permission_root</item>
+        <item>@string/working_permission_dhizuku</item>
+        <item>@string/working_permission_owner</item>
+        <item>@string/working_permission_island</item>
+        <item>@string/working_permission_privapp</item>
     </string-array>
     <string-array name="app_theme_entries">
         <item>@string/follow_system</item>

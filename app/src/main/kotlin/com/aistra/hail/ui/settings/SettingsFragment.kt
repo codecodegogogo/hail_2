@@ -58,7 +58,16 @@ import me.zhanghai.compose.preference.*
 import rikka.shizuku.Shizuku
 
 class SettingsFragment : MainFragment(), MenuProvider {
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    private var pendingWorkingMode: Pair<MutableState<String>, String>? = null
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            val (state, mode) = pendingWorkingMode ?: return@registerForActivityResult
+            pendingWorkingMode = null
+            if (granted) {
+                HIsland.checkOwnerApp()
+                commitWorkingMode(state, mode)
+            }
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val menuHost = requireActivity() as MenuHost
@@ -77,18 +86,10 @@ class SettingsFragment : MainFragment(), MenuProvider {
 
     @Composable
     private fun SettingsScreen() {
+        val workingMode = rememberPreferenceState(HailData.WORKING_MODE, HailData.MODE_DEFAULT)
         val autoFreezeAfterLock = rememberPreferenceState(HailData.AUTO_FREEZE_AFTER_LOCK, false)
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            listPreference(
-                key = HailData.WORKING_MODE,
-                defaultValue = HailData.MODE_DEFAULT,
-                onValueChange = ::onWorkingModeChange,
-                values = HailData.WORKING_MODE_VALUES,
-                entriesId = R.array.working_mode_entries,
-                titleId = R.string.working_mode,
-                icon = Icons.Outlined.Adb,
-                type = ListPreferenceType.ALERT_DIALOG
-            )
+            workingModePreferences(workingMode)
             switchPreference(
                 key = HailData.BIOMETRIC_LOGIN,
                 defaultValue = false,
@@ -194,6 +195,48 @@ class SettingsFragment : MainFragment(), MenuProvider {
         }
     }
 
+    private fun LazyListScope.workingModePreferences(state: MutableState<String>) {
+        item(key = "working_permission", contentType = "ListPreference") {
+            val permission = HailData.workingPermission(state.value)
+            ListPreference(
+                value = permission,
+                onValueChange = {
+                    updateWorkingMode(
+                        state,
+                        HailData.combineWorkingMode(it, HailData.workingAction(state.value))
+                    )
+                },
+                values = HailData.WORKING_PERMISSION_VALUES,
+                title = { Text(text = stringResource(R.string.working_permission)) },
+                icon = { Icon(imageVector = Icons.Outlined.Adb, contentDescription = null) },
+                summary = { Text(text = permission.toEntry(HailData.WORKING_PERMISSION_VALUES, R.array.working_permission_entries)) },
+                type = ListPreferenceType.ALERT_DIALOG,
+                valueToText = {
+                    AnnotatedString(it.toEntry(HailData.WORKING_PERMISSION_VALUES, R.array.working_permission_entries))
+                }
+            )
+        }
+        item(key = "working_action", contentType = "ListPreference") {
+            val permission = HailData.workingPermission(state.value)
+            val supportedActions = HailData.supportedWorkingActions(permission)
+            val action = HailData.workingAction(state.value)
+            val values = supportedActions.ifEmpty { listOf(HailData.MODE_DEFAULT) }
+            ListPreference(
+                value = action,
+                onValueChange = {
+                    updateWorkingMode(state, HailData.combineWorkingMode(permission, it))
+                },
+                values = values,
+                title = { Text(text = stringResource(R.string.working_action)) },
+                enabled = supportedActions.isNotEmpty(),
+                icon = { Spacer(modifier = Modifier.size(24.dp)) },
+                summary = { Text(text = stringResource(action.workingActionTitleId())) },
+                type = ListPreferenceType.ALERT_DIALOG,
+                valueToText = { AnnotatedString(getString(it.workingActionTitleId())) }
+            )
+        }
+    }
+
     private fun LazyListScope.horizontalDivider() = item { HorizontalDivider() }
 
     private fun LazyListScope.switchPreference(
@@ -276,6 +319,15 @@ class SettingsFragment : MainFragment(), MenuProvider {
     private fun String.toEntry(values: List<String>, @ArrayRes entriesId: Int): String =
         resources.getStringArray(entriesId)[values.indexOf(this)]
 
+    @StringRes
+    private fun String.workingActionTitleId(): Int = when (this) {
+        HailData.STOP -> R.string.working_action_stop
+        HailData.DISABLE -> R.string.working_action_disable
+        HailData.HIDE -> R.string.working_action_hide
+        HailData.SUSPEND -> R.string.working_action_suspend
+        else -> R.string.working_action_unavailable
+    }
+
     private fun setCalendarDisguiseEnabled(enabled: Boolean) {
         val packageManager = requireContext().packageManager
         val calendarLauncher = ComponentName(
@@ -298,9 +350,17 @@ class SettingsFragment : MainFragment(), MenuProvider {
         )
     }
 
-    fun onWorkingModeChange(rememberState: MutableState<String>, mode: String): Boolean {
-        // Show/hide terminal menu.
+    private fun updateWorkingMode(rememberState: MutableState<String>, mode: String) {
+        if (mode == rememberState.value) return
+        if (canUseWorkingMode(rememberState, mode)) commitWorkingMode(rememberState, mode)
+    }
+
+    private fun commitWorkingMode(rememberState: MutableState<String>, mode: String) {
+        rememberState.value = mode
         activity.invalidateOptionsMenu()
+    }
+
+    private fun canUseWorkingMode(rememberState: MutableState<String>, mode: String): Boolean {
         when {
             mode.startsWith(HailData.OWNER) -> if (!HPolicy.isDeviceOwnerActive) {
                 MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.title_set_owner)
@@ -326,7 +386,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
                                 awaitClose()
                             }.first()
                             if (result) {
-                                rememberState.value = mode
+                                commitWorkingMode(rememberState, mode)
                                 if (HTarget.O) HDhizuku.setDelegatedScopes()
                             }
                         }
@@ -367,7 +427,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
                                     Shizuku.removeRequestPermissionResultListener(listener)
                                 }
                             }.first()
-                            if (result) rememberState.value = mode
+                            if (result) commitWorkingMode(rememberState, mode)
                         }
                         false
                     }
@@ -383,12 +443,11 @@ class SettingsFragment : MainFragment(), MenuProvider {
                     mode == HailData.MODE_ISLAND_HIDE && HIsland.freezePermissionGranted() -> true
                     mode == HailData.MODE_ISLAND_SUSPEND && HIsland.suspendPermissionGranted() -> true
                     else -> {
-                        lifecycleScope.launch {
-                            requestPermissionLauncher.launch(
-                                if (mode == HailData.MODE_ISLAND_HIDE) HIsland.PERMISSION_FREEZE_PACKAGE
-                                else HIsland.PERMISSION_SUSPEND_PACKAGE
-                            )
-                        }
+                        pendingWorkingMode = rememberState to mode
+                        requestPermissionLauncher.launch(
+                            if (mode == HailData.MODE_ISLAND_HIDE) HIsland.PERMISSION_FREEZE_PACKAGE
+                            else HIsland.PERMISSION_SUSPEND_PACKAGE
+                        )
                         false
                     }
                 }
