@@ -18,6 +18,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.aistra.hail.R
+import com.aistra.hail.app.DisguiseSession
 import com.aistra.hail.app.HailData
 import com.aistra.hail.databinding.ActivityMainBinding
 import com.aistra.hail.extensions.*
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DisguiseSession.unlocked = true
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val binding = initView()
         if (!HailData.biometricLogin || BiometricManager.from(this)
@@ -109,5 +111,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     ) {
         fab.tag = destination.id == R.id.nav_home
         if (fab.tag == true) fab.show() else fab.hide()
+    }
+
+    override fun onDestroy() {
+        if (!isChangingConfigurations) DisguiseSession.unlocked = false
+        super.onDestroy()
     }
 }

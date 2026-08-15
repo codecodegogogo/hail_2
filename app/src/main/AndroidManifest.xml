@@ -41,7 +41,12 @@
             tools:targetApi="tiramisu">
         <activity
                 android:name=".ui.main.MainActivity"
+                android:exported="false"
+                android:launchMode="singleTask"/>
+        <activity
+                android:name=".ui.calendar.CalendarActivity"
                 android:exported="true"
+                android:label="@string/calendar_name"
                 android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -50,7 +55,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.ASSIST"/>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
