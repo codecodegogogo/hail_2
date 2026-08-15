@@ -1,11 +1,14 @@
 package com.aistra.hail.ui.calendar
 
 import android.content.Intent
+import android.icu.util.ChineseCalendar
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,11 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,10 +40,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.consume
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -168,30 +169,20 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                 ) {
                     Text(
                         text = monthName(visibleYear, visibleMonth),
-                        modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-                    IconButton(onClick = { changeMonth(-1) }, modifier = Modifier.size(48.dp)) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                            contentDescription = previousMonthDescription(),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = { changeMonth(1) }, modifier = Modifier.size(48.dp)) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                            contentDescription = nextMonthDescription(),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
                 }
                 Spacer(Modifier.height(24.dp))
                 WeekdayHeader()
                 Spacer(Modifier.height(12.dp))
-                MonthGrid(visibleYear, visibleMonth, today)
+                MonthGrid(
+                    year = visibleYear,
+                    month = visibleMonth,
+                    today = today,
+                    onSwipeMonth = { changeMonth(it) }
+                )
             }
         }
     }
@@ -222,7 +213,7 @@ private fun WeekdayHeader() {
 }
 
 @Composable
-private fun MonthGrid(year: Int, month: Int, today: Calendar) {
+private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int) -> Unit) {
     val firstDay = remember(year, month) { GregorianCalendar(year, month, 1) }
     val leadingEmptyCells = firstDay.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
     val daysInMonth = firstDay.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -231,8 +222,39 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar) {
     val maxWidth = 680.dp - 56.dp
     val cellSize = minOf(availableWidth, maxWidth) / 7f
     val fontSize = 18.sp
+    val lunarDates = remember(year, month) {
+        (1..daysInMonth).associateWith { day -> lunarDate(year, month, day) }
+    }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier = Modifier
+            .semantics {
+                contentDescription = if (Locale.getDefault().language == "zh") {
+                    "日历，左右滑动切换月份"
+                } else {
+                    "Calendar, swipe left or right to change month"
+                }
+            }
+            .pointerInput(year, month) {
+                var horizontalDrag = 0f
+                val swipeThreshold = 80.dp.toPx()
+                detectHorizontalDragGestures(
+                    onHorizontalDrag = { change, dragAmount ->
+                        change.consume()
+                        horizontalDrag += dragAmount
+                    },
+                    onDragEnd = {
+                        when {
+                            horizontalDrag <= -swipeThreshold -> onSwipeMonth(1)
+                            horizontalDrag >= swipeThreshold -> onSwipeMonth(-1)
+                        }
+                        horizontalDrag = 0f
+                    },
+                    onDragCancel = { horizontalDrag = 0f }
+                )
+            },
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         repeat(cellCount / 7) { row ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 repeat(7) { column ->
@@ -243,27 +265,40 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar) {
                         today.get(Calendar.MONTH) == month &&
                         today.get(Calendar.DAY_OF_MONTH) == day
                     Box(
-                        modifier = Modifier.weight(1f).height(cellSize.coerceIn(44.dp, 64.dp)),
+                        modifier = Modifier.weight(1f).height(cellSize.coerceIn(54.dp, 72.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         if (day in 1..daysInMonth) {
-                            Box(
-                                modifier = Modifier
-                                    .size(cellSize.coerceIn(42.dp, 54.dp))
-                                    .background(
-                                        if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                        CircleShape
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = day.toString(),
-                                    color = if (isToday) MaterialTheme.colorScheme.onPrimary
-                                    else MaterialTheme.colorScheme.onBackground,
-                                    fontSize = fontSize,
-                                    fontWeight = if (isToday) FontWeight.SemiBold else FontWeight.Medium,
-                                    textAlign = TextAlign.Center
-                                )
+                            val lunar = lunarDates[day]
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(cellSize.coerceIn(36.dp, 44.dp))
+                                        .background(
+                                            if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                            CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = day.toString(),
+                                        color = if (isToday) MaterialTheme.colorScheme.onPrimary
+                                        else MaterialTheme.colorScheme.onBackground,
+                                        fontSize = fontSize,
+                                        fontWeight = if (isToday) FontWeight.SemiBold else FontWeight.Medium,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                                if (lunar != null) {
+                                    Text(
+                                        text = lunar,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 11.sp,
+                                        lineHeight = 12.sp,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1
+                                    )
+                                }
                             }
                         }
                     }
@@ -277,6 +312,28 @@ private fun monthName(year: Int, month: Int): String =
     if (Locale.getDefault().language == "zh") "${month + 1}月"
     else SimpleDateFormat("LLLL", Locale.getDefault()).format(GregorianCalendar(year, month, 1).time)
 
-private fun previousMonthDescription(): String = if (Locale.getDefault().language == "zh") "上个月" else "Previous month"
+private val LunarMonthNames = arrayOf(
+    "正月", "二月", "三月", "四月", "五月", "六月",
+    "七月", "八月", "九月", "十月", "冬月", "腊月"
+)
 
-private fun nextMonthDescription(): String = if (Locale.getDefault().language == "zh") "下个月" else "Next month"
+private val LunarDayNames = arrayOf(
+    "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十",
+    "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
+    "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"
+)
+
+private fun lunarDate(year: Int, month: Int, day: Int): String? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return null
+    val solar = GregorianCalendar(year, month, day)
+    val lunar = ChineseCalendar().apply { time = solar.time }
+    val lunarMonth = lunar.get(ChineseCalendar.MONTH)
+    val lunarDay = lunar.get(ChineseCalendar.DAY_OF_MONTH)
+    if (lunarMonth !in LunarMonthNames.indices || lunarDay !in 1..LunarDayNames.size) return null
+    return if (lunarDay == 1) {
+        val leapPrefix = if (lunar.get(android.icu.util.Calendar.IS_LEAP_MONTH) == 1) "闰" else ""
+        leapPrefix + LunarMonthNames[lunarMonth]
+    } else {
+        LunarDayNames[lunarDay - 1]
+    }
+}

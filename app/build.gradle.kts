@@ -18,7 +18,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.aistra.hail.fork"
+        applicationId = "com.aistra.calendar"
         minSdk = 23
         targetSdk = 36
         versionCode = 34
@@ -67,7 +67,7 @@ androidComponents {
     onVariants { variant ->
         variant.outputs.forEach {
             if (it is com.android.build.api.variant.impl.VariantOutputImpl)
-                it.outputFileName = "Hail-v${it.versionName.get()}.apk"
+                it.outputFileName = "Calendar-v${it.versionName.get()}.apk"
         }
     }
 }

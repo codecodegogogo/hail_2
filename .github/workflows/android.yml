@@ -33,7 +33,7 @@ jobs:
       - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Hail-release-${{ github.sha }}
+          name: Calendar-release-${{ github.sha }}
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
           retention-days: 30
