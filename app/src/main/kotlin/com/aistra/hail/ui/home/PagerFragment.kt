@@ -100,6 +100,15 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
             if (isResumed) showTagDialog()
             true
         }
+        activity.fab.setOnClickListener { activity.toggleFabMenu() }
+        activity.fabMenu.findViewById<View>(R.id.fab_action_freeze_current).setOnClickListener {
+            activity.closeFabMenu()
+            setListFrozen(true, pagerAdapter.currentList.filterNot { it.whitelisted })
+        }
+        activity.fabMenu.findViewById<View>(R.id.fab_action_unfreeze_current).setOnClickListener {
+            activity.closeFabMenu()
+            setListFrozen(false, pagerAdapter.currentList)
+        }
     }
 
     private fun updateCurrentList() = HailData.checkedList.filter {
@@ -554,6 +563,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
     }
 
     override fun onDestroyView() {
+        activity.closeFabMenu()
         pagerAdapter.onDestroy()
         super.onDestroyView()
         _binding = null

@@ -2,6 +2,7 @@ package com.aistra.hail.ui.main
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
@@ -30,7 +31,9 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     lateinit var fab: ExtendedFloatingActionButton
+    lateinit var fabMenu: View
     lateinit var appbar: AppBarLayout
+    private var fabMenuExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +69,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         setContentView(root)
         setSupportActionBar(appBarMain.toolbar)
         fab = appBarMain.fab
+        fabMenu = appBarMain.fabMenu
         appbar = appBarMain.appBarLayout
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -86,6 +90,36 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         bottomNav?.applyDefaultInsetter { paddingRelative(isRtl, start = true, end = true, bottom = true) }
         navRail?.applyDefaultInsetter { paddingRelative(isRtl, start = true, top = true, bottom = true) }
         fab.applyDefaultInsetter { marginRelative(isRtl, end = true, bottom = isLandscape) }
+        fabMenu.applyDefaultInsetter { marginRelative(isRtl, end = true, bottom = isLandscape) }
+    }
+
+    fun toggleFabMenu() {
+        setFabMenuExpanded(!fabMenuExpanded)
+    }
+
+    fun closeFabMenu() {
+        setFabMenuExpanded(false)
+    }
+
+    private fun setFabMenuExpanded(expanded: Boolean) {
+        if (fabMenuExpanded == expanded) return
+        fabMenuExpanded = expanded
+        fabMenu.animate().cancel()
+        fab.animate().cancel()
+        if (expanded) {
+            fabMenu.isVisible = true
+            fabMenu.alpha = 0f
+            fabMenu.translationY = 16f
+            fabMenu.animate().alpha(1f).translationY(0f).setDuration(180L).start()
+        } else {
+            fabMenu.animate().alpha(0f).translationY(16f).setDuration(140L).withEndAction {
+                if (!fabMenuExpanded) fabMenu.isVisible = false
+            }.start()
+        }
+        fab.animate().rotation(if (expanded) -45f else 0f).setDuration(200L).start()
+        fab.contentDescription = getString(
+            if (expanded) R.string.action_close_freeze_menu else R.string.action_open_freeze_menu
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -109,6 +143,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun onDestinationChanged(
         controller: NavController, destination: NavDestination, arguments: Bundle?
     ) {
+        closeFabMenu()
         fab.tag = destination.id == R.id.nav_home
         if (fab.tag == true) fab.show() else fab.hide()
     }

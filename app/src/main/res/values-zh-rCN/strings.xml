@@ -20,6 +20,8 @@
     <string name="action_unfreeze_all">全部解冻</string>
     <string name="action_freeze_current">冻结可见</string>
     <string name="action_unfreeze_current">解冻可见</string>
+    <string name="action_open_freeze_menu">打开冻结操作</string>
+    <string name="action_close_freeze_menu">关闭冻结操作</string>
     <string name="action_lock">锁屏</string>
     <string name="action_lock_freeze">冻结并锁屏</string>
     <string name="action_launch">启动</string>

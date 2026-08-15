@@ -1,6 +1,10 @@
 <resources>
     <dimen name="header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_menu_bottom_margin">88dp</dimen>
+    <dimen name="fab_menu_spacing">8dp</dimen>
+    <dimen name="fab_menu_min_width">160dp</dimen>
+    <dimen name="fab_menu_corner_radius">18dp</dimen>
     <dimen name="app_icon_size">64dp</dimen>
     <dimen name="padding_extra_small">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>

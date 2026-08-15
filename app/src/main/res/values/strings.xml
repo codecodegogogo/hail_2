@@ -20,6 +20,8 @@
     <string name="action_unfreeze_all">Unfreeze all</string>
     <string name="action_freeze_current">Freeze visible</string>
     <string name="action_unfreeze_current">Unfreeze visible</string>
+    <string name="action_open_freeze_menu">Open freeze actions</string>
+    <string name="action_close_freeze_menu">Close freeze actions</string>
     <string name="action_freeze_non_whitelisted">Freeze non-whitelisted</string>
     <string name="action_lock">Lock</string>
     <string name="action_lock_freeze">Lock &amp; Freeze</string>
