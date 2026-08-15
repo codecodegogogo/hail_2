@@ -211,7 +211,7 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                                 .height(48.dp)
                                 .pointerInput(year, month, yearDoubleTapAt) {
                                     detectTapGestures(
-                                        onDoubleTap = {
+                                        onLongPress = {
                                             val now = SystemClock.elapsedRealtime()
                                             val sequenceIsValid = yearDoubleTapAt != 0L &&
                                                 now - yearDoubleTapAt <= 3_000L

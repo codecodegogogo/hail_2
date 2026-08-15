@@ -237,7 +237,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
                     updateWorkingMode(state, HailData.combineWorkingMode(permission, it))
                 },
                 values = values,
-                title = { Text(text = stringResource(R.string.working_action)) },
+                title = { Text(text = stringResource(R.string.default_working_mode)) },
                 enabled = supportedActions.isNotEmpty(),
                 icon = { Spacer(modifier = Modifier.size(24.dp)) },
                 summary = { Text(text = stringResource(action.workingActionTitleId())) },
