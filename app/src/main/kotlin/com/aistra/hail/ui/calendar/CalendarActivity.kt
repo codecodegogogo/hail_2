@@ -7,6 +7,13 @@ import android.os.Bundle
 import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -162,26 +169,38 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                     )
                 }
                 Spacer(Modifier.height(24.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = monthName(visibleYear, visibleMonth),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                AnimatedContent(
+                    targetState = visibleYear to visibleMonth,
+                    transitionSpec = {
+                        val sourceIndex = initialState.first * 12 + initialState.second
+                        val targetIndex = targetState.first * 12 + targetState.second
+                        val direction = if (targetIndex > sourceIndex) 1 else -1
+                        (slideInHorizontally(tween(220)) { width -> direction * width } + fadeIn(tween(180)))
+                            .togetherWith(
+                                slideOutHorizontally(tween(180)) { width -> -direction * width } +
+                                    fadeOut(tween(140))
+                            )
+                    },
+                    label = "calendarMonth"
+                ) { (year, month) ->
+                    Column {
+                        Text(
+                            text = monthName(year, month),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(24.dp))
+                        WeekdayHeader()
+                        Spacer(Modifier.height(12.dp))
+                        MonthGrid(
+                            year = year,
+                            month = month,
+                            today = today,
+                            onSwipeMonth = { changeMonth(it) }
+                        )
+                    }
                 }
-                Spacer(Modifier.height(24.dp))
-                WeekdayHeader()
-                Spacer(Modifier.height(12.dp))
-                MonthGrid(
-                    year = visibleYear,
-                    month = visibleMonth,
-                    today = today,
-                    onSwipeMonth = { changeMonth(it) }
-                )
             }
         }
     }
@@ -216,7 +235,7 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
     val firstDay = remember(year, month) { GregorianCalendar(year, month, 1) }
     val leadingEmptyCells = firstDay.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
     val daysInMonth = firstDay.getActualMaximum(Calendar.DAY_OF_MONTH)
-    val cellCount = ((leadingEmptyCells + daysInMonth + 6) / 7) * 7
+    val cellCount = 42
     val availableWidth = LocalConfiguration.current.screenWidthDp.dp - 56.dp
     val maxWidth = 680.dp - 56.dp
     val cellSize = minOf(availableWidth, maxWidth) / 7f
@@ -252,7 +271,7 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
                     onDragCancel = { horizontalDrag = 0f }
                 )
             },
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         repeat(cellCount / 7) { row ->
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -264,39 +283,52 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
                         today.get(Calendar.MONTH) == month &&
                         today.get(Calendar.DAY_OF_MONTH) == day
                     Box(
-                        modifier = Modifier.weight(1f).height(cellSize.coerceIn(54.dp, 72.dp)),
+                        modifier = Modifier.weight(1f).height(64.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         if (day in 1..daysInMonth) {
                             val lunar = lunarDates[day]
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
                                 Box(
-                                    modifier = Modifier
-                                        .size(cellSize.coerceIn(36.dp, 44.dp))
-                                        .background(
-                                            if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                            CircleShape
-                                        ),
+                                    modifier = Modifier.fillMaxWidth().height(42.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = day.toString(),
-                                        color = if (isToday) MaterialTheme.colorScheme.onPrimary
-                                        else MaterialTheme.colorScheme.onBackground,
-                                        fontSize = fontSize,
-                                        fontWeight = if (isToday) FontWeight.SemiBold else FontWeight.Medium,
-                                        textAlign = TextAlign.Center
-                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .size(cellSize.coerceIn(36.dp, 40.dp))
+                                            .background(
+                                                if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                                CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = day.toString(),
+                                            color = if (isToday) MaterialTheme.colorScheme.onPrimary
+                                            else MaterialTheme.colorScheme.onBackground,
+                                            fontSize = fontSize,
+                                            fontWeight = if (isToday) FontWeight.SemiBold else FontWeight.Medium,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
                                 }
-                                if (lunar != null) {
-                                    Text(
-                                        text = lunar,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        fontSize = 11.sp,
-                                        lineHeight = 12.sp,
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 1
-                                    )
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().height(20.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (lunar != null) {
+                                        Text(
+                                            text = lunar,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontSize = 11.sp,
+                                            lineHeight = 16.sp,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 1
+                                        )
+                                    }
                                 }
                             }
                         }
