@@ -1,237 +1,149 @@
-简体中文 | [English](README_EN.md) | [日本語](README_JP.md)
+# Hail_2
 
-# 雹 Hail
+这是基于 [Hail](https://github.com/aistra0528/Hail) 修改的 Android 应用管理工具。默认安装名称为“日历”，包名为 `com.aistra.calendar`。打开应用后先显示日历，完成指定操作才会进入应用管理界面。
 
-[![Android CI status](https://github.com/aistra0528/Hail/workflows/Android%20CI/badge.svg)](https://github.com/aistra0528/Hail/actions)
-[![翻译状态](https://hosted.weblate.org/widgets/hail/-/svg-badge.svg)](https://hosted.weblate.org/engage/hail/)
-[![Downloads](https://img.shields.io/github/downloads/aistra0528/Hail/total.svg)](https://github.com/aistra0528/Hail/releases)
-[![License](https://img.shields.io/github/license/aistra0528/Hail)](LICENSE)
+本分支保留了 Hail 的应用停用、隐藏、暂停、强行停止、标签管理和自动操作能力，并调整了设置结构与批量操作方式。
 
-雹是一款用于冻结 Android 应用的自由软件。[GitHub Releases](https://github.com/aistra0528/Hail/releases)
+> 对系统应用执行停用、隐藏或暂停可能导致系统异常，严重时可能无法正常开机。操作系统应用前，请确认自己知道如何通过 ADB、Root 或 Recovery 恢复。
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.aistra.hail/)
+## 1. 功能和使用方法
 
-<img src="fastlane/metadata/android/zh-CN/images/phoneScreenshots/1.png" width="32%" /> <img src="fastlane/metadata/android/zh-CN/images/phoneScreenshots/2.png" width="32%" /> <img src="fastlane/metadata/android/zh-CN/images/phoneScreenshots/3.png" width="32%" />
+### 1.1 首页-添加和管理应用
 
-## 冻结
+底部“应用”页面用于选择需要管理的软件：
 
-冻结`freeze`是一个营销用语，用于描述使**应用在用户不需要时不可运行**
-的行为，以此控制设备使用、减少内存占用和节省电量。用户可在需要时解冻`unfreeze`应用。
+1. 找到目标应用并勾选。
+2. 返回“首页”，应用会出现在当前标签中。
+3. 点击应用图标可启动应用。应用处于停用、隐藏或暂停状态时，软件会先尝试恢复再启动。
+4. 长按应用可执行操作、恢复、定时任务、置顶、白名单、标签分组、复制包名或移出首页。
 
-在一般情况下，“冻结”是指停用，此外雹也可以通过隐藏和暂停来“冻结”应用。
+应用页面支持按名称、首次安装时间和最近更新时间排序，也可以筛选用户应用、系统应用以及已操作或未操作的应用。
 
-### 停用
+如果某个首页应用已经被其他工具卸载，它仍会保留在原标签中，但会统一排到正常应用之后。可长按该条目并选择“从首页中移除”来清理记录。
 
-被停用`disable`的应用不会出现在启动器中。在已安装应用列表中会显示已停用`disabled`状态。启用`enable`应用即可恢复。
+### 1.2 首页-标签和独立模式
 
-### 隐藏
+首页可以按标签管理应用。同一个应用可以加入多个标签。
 
-被隐藏`hide`的应用不会出现在启动器和已安装应用列表中。取消隐藏`unhide`应用即可恢复。
+- 长按标签可重命名标签，并为该标签选择**独立模式**。
+- 标签模式只显示当前权限支持的操作。
+- 标签模式的**优先级高于**设置中的默认模式。
+- 标签没有设置独立模式时，使用设置页的默认模式。
+- 一个应用同时属于多个独立模式标签时，按首页标签顺序采用第一个匹配的模式。
 
-> 在这种状态下，软件包几乎处于卸载状态，无法使用，但并没有删除数据或实际的软件包文件。
+例如，默认模式为“停用”，可以让 A 标签继续使用停用，让 B 标签单独使用隐藏。执行全部操作时，软件会分别处理，并显示“A 标签已停用”“B 标签已隐藏”之类的结果。
 
-### 暂停 (Android 7.0+)
+### 1.3 首页-当前标签和全部应用操作
 
-被暂停`suspend`的应用在启动器中会显示为灰度图标。取消暂停`unsuspend`应用即可恢复。
+首页右下角按钮用于处理当前可见标签：
 
-> 在这种状态下，应用程序的通知将被隐藏，任何启动活动将被停止，不能弹出提示、对话框或播放音频。
-> 当用户试图启动一个暂停的应用程序时，系统将向用户显示一个对话框，告知他们在暂停状态下不能使用这个应用程序。
+- 操作可见：按照当前标签的模式处理该标签中的非白名单应用。
+- 恢复可见：按照当前标签的模式恢复该标签中的应用。
 
-暂停只会阻止用户与应用交互，而**不会**阻止应用在后台运行。
+点击按钮后会展开两个独立选项，按钮图标同时旋转。再次点击可收起菜单。
 
-## 工作模式
+首页右上角菜单保留以下批量功能：
 
-**冻结的应用需要通过相同工作模式解冻。**
+- 全部操作：没有独立标签模式的应用使用默认模式；设置过独立模式的标签使用标签模式。
+- 全部恢复：按对应模式恢复应用。
+- 操作非白名单应用。
+- 从剪贴板或当前已处理应用导入。
+- 导出当前标签或全部应用的包名。
 
-1. 如果您的设备支持无线调试 (Android 11+) 或已 root，推荐选择`Shizuku`。
+### 1.4设置-选择权限和默认模式
 
-2. 如果您的设备已 root，可选择`Root`。**此模式速度相对较慢。**
+第一次使用时，先进入设置页选择“权限”，再选择“默认模式”。可选权限及对应操作如下：
 
-| 授权方式                                                                                           | 强行停止 | 停用 | 隐藏 | 暂停 | 卸载/重新安装（系统应用） |
-|------------------------------------------------------------------------------------------------|------|----|----|----|---------------|
-| Root                                                                                           | ✓    | ✓  | ✓  | ✓  | ✓             |
-| 设备所有者                                                                                          | ✗    | ✗  | ✓  | ✓  | ✗             |
-| 特权系统应用                                                                                         | ✓    | ✓  | ✗  | ✗  | ✗             |
-| [Shizuku](https://github.com/RikkaApps/Shizuku) (root)/[Sui](https://github.com/RikkaApps/Sui) | ✓    | ✓  | ✓  | ✓  | ✓             |
-| [Shizuku](https://github.com/RikkaApps/Shizuku) (adb)                                          | ✓    | ✓  | ✗  | ✓  | ✓             |
-| [Dhizuku](https://github.com/iamr0s/Dhizuku)                                                   | ✗    | ✗  | ✓  | ✓  | ✗             |
-| [炼妖壶](https://github.com/oasisfeng/island)/[Insular](https://gitlab.com/secure-system/Insular) | ✗    | ✗  | ✓  | ✓  | ✗             |
+| 权限             | 强行停止 |  停用  |  隐藏  |  暂停  |
+| ---------------- | :------: | :----: | :----: | :----: |
+| Root             |   支持   |  支持  |  支持  |  支持  |
+| Shizuku          |   支持   |  支持  |  支持  |  支持  |
+| Dhizuku          |  不支持  | 不支持 |  支持  |  支持  |
+| 设备所有者       |  不支持  | 不支持 |  支持  |  支持  |
+| 炼妖壶 / Insular |  不支持  | 不支持 |  支持  |  支持  |
+| 特权系统应用     |   支持   |  支持  | 不支持 | 不支持 |
 
-### 设备所有者
+具体可用情况还会受到 Android 版本、系统限制和授权方式影响。例如部分非 Root 的 Shizuku 环境无法执行隐藏操作。
 
-**设置为设备所有者的应用需要移除设备所有者后方可卸载。**
+几种模式的区别：
 
-#### 通过 adb 将雹设置为设备所有者
+- 强行停止：结束应用当前进程，应用之后仍可能被系统或其他事件重新启动。
+- 停用：应用无法运行，桌面入口通常会消失，可通过“启用”恢复。
+- 隐藏：应用会从启动器和普通应用列表中隐藏，可通过“取消隐藏”恢复。
+- 暂停：限制用户启动应用并隐藏通知，但不保证应用后台进程完全停止。
 
-[Android 调试桥 (adb) 指南](https://developer.android.google.cn/studio/command-line/adb)
+执行操作和恢复时应保持权限一致。更改权限或标签模式前，建议先恢复已经处理的应用。
 
-[下载 Android SDK 平台工具](https://developer.android.google.cn/studio/releases/platform-tools)
+### 1.5设置-自动操作
 
-通过 adb 发出命令：
+设置页“自动操作”可以在锁屏后处理首页应用，并设置操作延时。还可以选择：
 
-```shell
-adb shell dpm set-device-owner com.aistra.hail/.receiver.DeviceAdminReceiver
-```
+- 充电时跳过。
+- 跳过前台应用。
+- 跳过正在显示通知的应用。
 
-设置成功后会输出以下信息：
+跳过前台应用需要授予使用情况访问权限；跳过通知应用需要授予通知读取权限。
 
-```
-Success: Device owner set to package com.aistra.hail
-Active admin set to component {com.aistra.hail/com.aistra.hail.receiver.DeviceAdminReceiver}
-```
+### 1.6设置-生物识别和界面设置
 
-如输出其他信息，请使用搜索引擎自行查阅与解决。
+设置页还保留以下选项：
 
-#### 移除雹的设备所有者
+- 生物识别验证。
+- 浅色、深色或跟随系统主题。
+- 首页字体大小。
+- 模糊搜索。
 
-设置 > 移除设备所有者
+“关于”不再占用底部导航栏，可在“设置 > 其他 > 关于”中打开。
 
-### 特权系统应用
+### 1.7 增加日历伪装功能
 
-需要设置特许权限许可名单：
+开启后，应用会以“日历”的名称和图标显示。打开应用时先进入日历页面，可查看阳历、农历，并通过左右滑动切换月份。
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<permissions>
-    <privapp-permissions package="com.aistra.hail">
-        <permission name="android.permission.PACKAGE_USAGE_STATS"/>
-        <permission name="android.permission.FORCE_STOP_PACKAGES"/>
-        <permission name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"/>
-        <permission name="android.permission.MANAGE_APP_OPS_MODES"/>
-    </privapp-permissions>
-</permissions>
-```
+进入管理页面的方法：先双击年份，再在 3 秒内长按月份。成功进入后，本次运行期间不会再次显示日历；关闭并重新打开应用后，日历页面会恢复。
 
-并将雹安装为特权系统应用。
+如不需要此功能，可在“设置 > 自定义”中关闭“启用日历隐藏”，之后打开应用将直接进入主界面。
 
-推荐方法是在构建 ROM 时导入雹，`Android.bp`配置示例：
 
-```bp
-android_app_import {
-    name: "Hail",
-    apk: "Hail.apk",
-    privileged: true,
 
-    dex_preopt: {
-        enabled: false,
-    },
-    presigned: true,
-    preprocessed: true,
+## 2. 相对原版增加和修改的功能
 
-    required: ["privapp-permissions_com.aistra.hail.xml"]
-}
+本分支增加或调整了以下内容：
 
-prebuilt_etc {
-    name: "privapp-permissions_com.aistra.hail.xml",
-    src: "privapp-permissions.xml",
-    sub_dir: "permissions",
-}
-```
+- 增加日历伪装页，支持阳历、农历、滑动切月和切月动画。
+- 增加“启用日历隐藏”开关；当前解锁动作为双击年份后长按月份。
+- 应用默认名称改为“日历”，包名改为 `com.aistra.calendar`，APK 文件名改为 `Calendar-v版本号.apk`。
+- 将工作模式拆成“权限”和“默认模式”两行，先选授权方式，再选该权限支持的操作。
+- 增加标签独立模式，标签设置优先于默认模式。
+- “冻结可见 / 解冻可见”改为“操作可见 / 恢复可见”，并移动到首页右下角展开菜单。
+- “全部冻结 / 全部解冻”改为“全部操作 / 全部恢复”，批量执行时会按标签模式分别处理。
+- 批量操作提示改为显示标签和实际执行结果，不再统一显示为“冻结”。
+- “自动冻结”分组改名为“自动操作”，“冻结延时”改名为“操作延时”。
+- 将“关于”从底部导航移到设置页最下方的“其他”分组。
+- 已卸载但仍留在标签中的应用残留会排到列表最后。
+- 增加 GitHub Actions 自动编译，推送代码后可直接下载 APK 成品。
 
-## 恢复
+## 3. 已删除的功能
 
-### 通过 adb
+为了精简设置页和不再使用的入口，本分支删除了：
 
-替换 com.package.name 为目标应用的包名。
+- 图标包设置。
+- 灰度图标。
+- 紧凑图标。
+- 合成自适应图标。
+- T9 九键搜索。
+- 整个“快捷方式”设置分组，包括添加固定快捷方式、动态快捷方式操作和清除动态快捷方式。
+- 快捷设置磁贴的操作设置、磁贴服务及相关代码。
+- 底部导航栏中的“关于”按钮。关于页面本身仍然保留，入口已移到设置页。
+- 首页右上角菜单中的“操作可见 / 恢复可见”。功能没有取消，已经移动到右下角按钮。
 
-```shell
-# 启用应用
-adb shell pm enable com.package.name
-# 取消隐藏应用 (需要 root)
-adb shell su -c pm unhide com.package.name
-# 取消暂停应用
-adb shell pm unsuspend com.package.name
-```
+## 4. MiPush Enhance 兼容性
 
-### 修改文件
+支持[New MiPush Enhance](https://github.com/Xposed-Modules-Repo/io.github.codecodegogogo.newmipushenhance) 冻结推送。使用该模块时，应按模块说明设置 LSPosed 作用域。当前标签如果单独选择了“停用”，标签内的应用也可以使用。
 
-访问`/data/system/users/0/package-restrictions.xml`，此文件存储了应用限制相关信息。您可修改、重命名或直接删除此文件。
+## 5. 项目与许可
 
-- 启用应用：修改`enabled`属性为 2 (DISABLED) 或 3 (DISABLED_USER) 的值为 1 (ENABLED)
+- 本分支仓库：[codecodegogogo/hail_2](https://github.com/codecodegogogo/hail_2)
+- 原项目：[aistra0528/Hail](https://github.com/aistra0528/Hail)
+- 开源许可：[GNU General Public License v3.0](LICENSE)
 
-- 取消隐藏应用：修改`hidden`属性为 true 的值为 false
-
-- 取消暂停应用：修改`suspended`属性为 true 的值为 false
-
-### 通过恢复模式清除数据 (wipe data)
-
-**希望您能谨慎地选择冻结应用，以免陷入此窘境。**
-
-## API
-
-```shell
-adb shell am start -a action -e key value
-```
-
-`action`可为：
-
-- `com.aistra.hail.action.LAUNCH`：解冻并启动目标应用。应用未冻结时会直接启动。`key="package"` `value="com.package.name"`
-
-- `com.aistra.hail.action.FREEZE`：冻结目标应用。应用需处于首页。`key="package"` `value="com.package.name"`
-
-- `com.aistra.hail.action.UNFREEZE`：解冻目标应用。`key="package"` `value="com.package.name"`
-
-- `com.aistra.hail.action.FREEZE_TAG`：冻结目标标签中的全部非白名单应用。`key="tag"` `value="标签名"`
-
-- `com.aistra.hail.action.UNFREEZE_TAG`：解冻目标标签中的全部应用。`key="tag"` `value="标签名"`
-
-- `com.aistra.hail.action.FREEZE_ALL`：冻结首页全部应用。无需`extra`。
-
-- `com.aistra.hail.action.UNFREEZE_ALL`：解冻首页全部应用。无需`extra`。
-
-- `com.aistra.hail.action.FREEZE_NON_WHITELISTED`：冻结首页全部非白名单应用。无需`extra`。
-
-- `com.aistra.hail.action.FREEZE_AUTO`：自动冻结首页应用。无需`extra`。
-
-- `com.aistra.hail.action.LOCK`：锁定屏幕。无需`extra`。
-
-- `com.aistra.hail.action.LOCK_FREEZE`：冻结首页全部应用并锁定屏幕。无需`extra`。
-
-或使用以下`schema`:
-
-- `hail://launch?package=xxx`
-
-- `hail://freeze?package=xxx`
-
-- `hail://unfreeze?package=xxx`
-
-- `hail://freeze_tag?tag=xxx`
-
-- `hail://unfreeze_tag?tag=xxx`
-
-- `hail://freeze_all`
-
-- `hail://unfreeze_all`
-
-- `hail://freeze_non_whitelisted`
-
-- `hail://freeze_auto`
-
-- `hail://lock`
-
-- `hail://lock_freeze`
-
-## 协助翻译
-
-要将雹翻译成您的语言，或完善现有的翻译，请使用 [Weblate](https://hosted.weblate.org/engage/hail/)。
-
-[![翻译状态](https://hosted.weblate.org/widgets/hail/-/multi-auto.svg)](https://hosted.weblate.org/engage/hail/)
-
-## 许可证
-
-    Hail - Freeze Android apps
-    Copyright (C) 2021-2026 Aistra
-    Copyright (C) 2022-2026 Hail contributors
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+本项目包含原 Hail 的代码和后续修改，继续按照 GPL-3.0 许可发布。
