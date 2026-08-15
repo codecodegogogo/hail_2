@@ -132,7 +132,6 @@
         <item quantity="other">%1$d நிமிடங்களுக்குப் பிறகு %2$s: %3$s</item>
     </plurals>
     <string name="action_clear_dynamic_shortcuts">அனைத்து மாறும் குறுக்குவழிகளையும் அழிக்கவும்</string>
-    <string name="tile_action">விரைவு அமைப்பு டைல் செயல்பாடு</string>
     <string name="auto_freeze">ஆட்டோ முடக்கம்</string>
     <string name="auto_freeze_notification_title">ஆட்டோ ஃப்ரீச் பணி இயங்குகிறது</string>
     <string name="auto_freeze_after_lock">திரை பூட்டப்பட்ட பிறகு</string>

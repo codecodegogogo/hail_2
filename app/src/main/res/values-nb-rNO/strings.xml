@@ -96,7 +96,6 @@
     <string name="action_freeze_tag">Frysningsetikett</string>
     <string name="mode_su_disable">Superbruker — skru av</string>
     <string name="mode_shizuku_hide">Shizuku — skjul</string>
-    <string name="tile_action">Flishandling</string>
     <string name="auto_freeze_notification_title">Autofrysningstjenesten kjører</string>
     <string name="mode_shizuku_suspend">Shizuku — hvilemodus</string>
     <string name="title_remove_owner">Fjern enhetseier</string>

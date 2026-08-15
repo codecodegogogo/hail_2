@@ -92,7 +92,6 @@
         <item quantity="other">%2$s después de %1$d minutos: %3$s</item>
     </plurals>
     <string name="action_clear_dynamic_shortcuts">Borrar todos los accesos directos dinámicos</string>
-    <string name="tile_action">Acción del botón de acceso rápido</string>
     <string name="auto_freeze">Congelación automática</string>
     <string name="auto_freeze_notification_title">El servicio de congelación automática está en ejecución</string>
     <string name="auto_freeze_after_lock">Al bloquear la pantalla</string>

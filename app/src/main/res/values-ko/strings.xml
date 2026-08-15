@@ -110,7 +110,6 @@
     <string name="msg_freeze">동결됨: %s</string>
     <string name="msg_unfreeze">동결해제됨:%s</string>
     <string name="action_clear_dynamic_shortcuts">모든 바로가기 지우기</string>
-    <string name="tile_action">타일 동작</string>
     <string name="auto_freeze">자동 동결</string>
     <string name="auto_freeze_notification_title">자동 동결 서비스가 실행중입니다</string>
     <string name="auto_freeze_after_lock">화면 잠금 후</string>

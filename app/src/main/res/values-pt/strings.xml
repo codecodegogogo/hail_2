@@ -57,7 +57,6 @@
     <string name="mode_su_disable">Root - Desativar</string>
     <string name="title_shortcuts">Atalhos</string>
     <string name="title_about">Sobre</string>
-    <string name="tile_action">Ação de bloco</string>
     <string name="action_export_all">Exportar tudo</string>
     <string name="grayscale_icon">Ícone em tons de cinzento</string>
     <string name="action_skip">Pular</string>

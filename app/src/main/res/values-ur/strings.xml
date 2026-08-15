@@ -67,7 +67,6 @@
         <item quantity="other">%2$sکے بعد %1$dمنٹس: %3$s</item>
     </plurals>
     <string name="action_clear_dynamic_shortcuts">‏تمام متحرک شارٹ کٹس کو صاف کریں</string>
-    <string name="tile_action">ٹائل ایکشن</string>
     <string name="auto_freeze">آٹو منجمد</string>
     <string name="auto_freeze_notification_title">آٹو فریز سروس چل رہی ہے</string>
     <string name="auto_freeze_after_lock">اسکرین لاک ہونے کے بعد</string>

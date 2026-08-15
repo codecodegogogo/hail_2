@@ -134,14 +134,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 titleId = R.string.fuzzy_search,
                 icon = Icons.AutoMirrored.Outlined.ManageSearch
             )
-            listPreference(
-                key = HailData.TILE_ACTION,
-                defaultValue = HailData.tileAction,
-                values = HailData.TILE_ACTION_VALUES,
-                entriesId = R.array.tile_action_entries,
-                titleId = R.string.tile_action,
-                icon = Icons.Outlined.DashboardCustomize
-            )
             horizontalDivider()
             preferenceCategory(key = "auto_freeze", title = { Text(text = stringResource(R.string.auto_freeze)) })
             switchPreference(

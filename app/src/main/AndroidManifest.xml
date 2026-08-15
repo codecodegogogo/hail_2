@@ -47,7 +47,6 @@
                 android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.ASSIST"/>
-                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -135,16 +134,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-                android:name=".services.QSTileService"
-                android:exported="true"
-                android:icon="@drawable/ic_round_frozen"
-                android:label="@string/tile_action"
-                android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE"/>
-            </intent-filter>
-        </service>
         <service
                 android:name=".services.AutoFreezeService"
                 android:foregroundServiceType="specialUse"

@@ -71,7 +71,6 @@
         <item quantity="other">%2$s , %1$d perc után: %3$s</item>
     </plurals>
     <string name="action_clear_dynamic_shortcuts">Törölje az összes dinamikus parancsikont</string>
-    <string name="tile_action">Gyorskapcsoló művelet</string>
     <string name="auto_freeze_after_lock">A képernyő lezárása után</string>
     <string name="skip_while_charging">Kihagyás töltés közben</string>
     <string name="skip_foreground_app">Kihagyás előtérben lévő appoknál</string>

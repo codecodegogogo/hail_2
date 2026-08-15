@@ -95,21 +95,7 @@ object HailData {
     const val CALENDAR_DISGUISE = "calendar_disguise"
     const val HOME_FONT_SIZE = "home_font_size_f"
     const val FUZZY_SEARCH = "fuzzy_search"
-    const val TILE_ACTION = "tile_action"
-    const val ACTION_FREEZE_ALL = "freeze_all"
-    const val ACTION_UNFREEZE_ALL = "unfreeze_all"
-    const val ACTION_FREEZE_NON_WHITELISTED = "freeze_non_whitelisted"
     const val ACTION_LOCK = "lock"
-    const val ACTION_LOCK_FREEZE = "lock_freeze"
-    val TILE_ACTION_VALUES =
-        listOf(
-            AUTO_FREEZE_AFTER_LOCK,
-            ACTION_FREEZE_ALL,
-            ACTION_UNFREEZE_ALL,
-            ACTION_FREEZE_NON_WHITELISTED,
-            ACTION_LOCK,
-            ACTION_LOCK_FREEZE
-        )
     const val AUTO_FREEZE_AFTER_LOCK = "auto_freeze_after_lock"
     const val AUTO_FREEZE_DELAY = "auto_freeze_delay_f"
     const val SKIP_WHILE_CHARGING = "skip_while_charging"
@@ -128,7 +114,6 @@ object HailData {
     val appTheme get() = sp.getString(APP_THEME, FOLLOW_SYSTEM)!!
     val homeFontSize get() = sp.getFloat(HOME_FONT_SIZE, 14f)
     val fuzzySearch get() = sp.getBoolean(FUZZY_SEARCH, false)
-    val tileAction get() = sp.getString(TILE_ACTION, AUTO_FREEZE_AFTER_LOCK)!!
     var autoFreezeAfterLock
         get() = sp.getBoolean(AUTO_FREEZE_AFTER_LOCK, false)
         set(value) = sp.edit { putBoolean(AUTO_FREEZE_AFTER_LOCK, value) }

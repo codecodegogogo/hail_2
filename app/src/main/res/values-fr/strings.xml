@@ -95,7 +95,6 @@
         <item quantity="other">%2$s après %1$d minutes : %3$s</item>
     </plurals>
     <string name="action_export_current">Exporter celles sélectionnées</string>
-    <string name="tile_action">Action pour Paramètres rapides</string>
     <string name="action_export_all">Tout exporter</string>
     <string name="grayscale_icon">Icone en niveaux de gris</string>
     <string name="action_skip">Ignorer</string>

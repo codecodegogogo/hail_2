@@ -26,7 +26,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.aistra.hail.HailApp.Companion.app
 import com.aistra.hail.R
 import com.aistra.hail.app.AppInfo
@@ -78,18 +77,6 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                 activity, resources.getInteger(R.integer.home_span)
             )
             adapter = pagerAdapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    when (newState) {
-                        RecyclerView.SCROLL_STATE_IDLE -> activity.fab.run {
-                            postDelayed({ if (tag == true) show() }, 1000)
-                        }
-
-                        RecyclerView.SCROLL_STATE_DRAGGING -> activity.fab.hide()
-                    }
-                }
-            })
             applyDefaultInsetter { paddingRelative(isRtl, bottom = isLandscape) }
 
         }
@@ -111,13 +98,6 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         activity.appbar.setLiftOnScrollTargetView(binding.recyclerView)
         tabs.getTabAt(tabs.selectedTabPosition)?.view?.setOnLongClickListener {
             if (isResumed) showTagDialog()
-            true
-        }
-        activity.fab.setOnClickListener {
-            setListFrozen(true, pagerAdapter.currentList.filterNot { it.whitelisted })
-        }
-        activity.fab.setOnLongClickListener {
-            setListFrozen(true)
             true
         }
     }
@@ -148,7 +128,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
             return
         }
         if (info.applicationInfo == null) {
-            Snackbar.make(activity.fab, R.string.app_not_installed, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.root, R.string.app_not_installed, Snackbar.LENGTH_LONG)
                 .setAction(R.string.action_remove_home) { removeCheckedApp(info.packageName) }.show()
             return
         }
@@ -191,7 +171,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                         .setItems(entries) { _, i ->
                             HWork.setDeferredFrozen(pkg, !frozen, values[i].toLong())
                             Snackbar.make(
-                                activity.fab, resources.getQuantityString(
+                                binding.root, resources.getQuantityString(
                                     R.plurals.msg_deferred_task, values[i], values[i], action, info.name
                                 ), Snackbar.LENGTH_INDEFINITE
                             ).setAction(R.string.action_undo) { HWork.cancelWork(pkg) }.show()

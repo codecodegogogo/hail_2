@@ -59,12 +59,4 @@
         <item>@string/donate_liberapay</item>
         <item>@string/donate_paypal</item>
     </string-array>
-    <string-array name="tile_action_entries">
-        <item>@string/auto_freeze</item>
-        <item>@string/action_freeze_all</item>
-        <item>@string/action_unfreeze_all</item>
-        <item>@string/action_freeze_non_whitelisted</item>
-        <item>@string/action_lock</item>
-        <item>@string/action_lock_freeze</item>
-    </string-array>
 </resources>

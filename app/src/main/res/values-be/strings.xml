@@ -88,7 +88,6 @@
     <string name="shizuku_missing">Shizuku адсутнічае :(</string>
     <string name="msg_unfreeze">Незамарожана: %s</string>
     <string name="action_clear_dynamic_shortcuts">Ачысціць ўсе дынамічныя цэтлікі</string>
-    <string name="tile_action">Дзеянне пліткі хуткіх налад</string>
     <string name="auto_freeze_after_lock">Пасля блакіроўкі экрана</string>
     <string name="dynamic_shortcut_action">Дзеянне дынамічнага скарота</string>
     <string name="action_freeze_tag">Замарозіць тэг</string>

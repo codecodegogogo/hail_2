@@ -99,7 +99,6 @@
     <string name="synthesize_adaptive_icons">آمیختن آیکون‌های سازگار</string>
     <string name="skip_notifying_app">رد کردن برنامه‌ی دارای نوتیفیکیشن</string>
     <string name="action_terminal">ترمینال</string>
-    <string name="tile_action">اقدام کاشی</string>
     <string name="auto_freeze_notification_title">سرویس یخ‌زدن خودکار در حال اجرا است</string>
     <string name="auto_freeze_after_lock">بعد از قفل شدن صفحه</string>
     <string name="skip_foreground_app">رد کردن برنامه پیش زمینه</string>

@@ -108,7 +108,6 @@
     <string name="msg_freeze">Jäädytetty: %s</string>
     <string name="msg_unfreeze">Lämmitetty: %s</string>
     <string name="action_clear_dynamic_shortcuts">Tyhjennä kaikki dynaamiset pikakuvakkeet</string>
-    <string name="tile_action">Laattojen toiminta</string>
     <string name="auto_freeze_notification_title">Automaattinen jäädytyspalvelu on käynnissä</string>
     <string name="auto_freeze">Automaattinen jäädytys</string>
     <string name="skip_while_charging">Ohita latauksen aikana</string>

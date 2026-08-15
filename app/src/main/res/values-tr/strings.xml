@@ -83,7 +83,6 @@
         <item quantity="other">%1$d dakika sonra %2$s: %3$s</item>
     </plurals>
     <string name="action_clear_dynamic_shortcuts">Tüm dinamik kısayolları temizle</string>
-    <string name="tile_action">Hızlı ayar kutusu eylemi</string>
     <string name="auto_freeze">Otomatik dondur</string>
     <string name="auto_freeze_notification_title">Otomatik dondurma hizmeti çalışıyor</string>
     <string name="msg_set_owner">adb komutu hatalı:
