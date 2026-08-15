@@ -1,0 +1,15 @@
+<p>雹是一款用于冻结 Android 应用的自由软件，您可自由享用所有功能。</p>
+<h3>冻结</h3>
+<p>冻结<code>freeze</code>是一个营销用语，用于描述使<strong>应用在用户不需要时不可运行</strong>的行为，以此控制设备使用、减少内存占用和节省电量。用户可在需要时解冻<code>unfreeze</code>应用。
+</p>
+<p>在一般情况下，“冻结”是指停用，此外雹也可以通过隐藏和暂停来“冻结”应用。</p>
+<h4>停用</h4>
+<p>
+    被停用<code>disable</code>的应用不会出现在启动器中。在已安装应用列表中应用会显示已停用<code>disabled</code>状态。启用<code>enable</code>应用即可恢复。
+</p>
+<h4>隐藏</h4>
+<p>被隐藏<code>hide</code>的应用不会出现在启动器和已安装应用列表中。取消隐藏<code>unhide</code>应用即可恢复。</p>
+<h4>暂停</h4>
+<p>被暂停<code>suspend</code>的应用在启动器中会显示为灰度图标。取消暂停<code>unsuspend</code>应用即可恢复。</p>
+<h3>工作模式</h3>
+<p>雹支持以<code>设备所有者</code>、<code>Dhizuku</code>、<code>超级用户</code> (Root) 和<code>Shizuku</code> (含 Sui) 模式工作。</p>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-sdk tools:overrideLibrary="rikka.shizuku.api, com.rosan.dhizuku.api"/>
+
+    <uses-permission
+            android:name="com.android.launcher.permission.INSTALL_SHORTCUT"
+            android:maxSdkVersion="25"/>
+    <uses-permission
+            android:name="android.permission.QUERY_ALL_PACKAGES"
+            tools:ignore="QueryAllPackagesPermission"/>
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission
+            android:name="android.permission.PACKAGE_USAGE_STATS"
+            tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+            android:name="android.permission.FORCE_STOP_PACKAGES"
+            tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+            android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"
+            tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+            android:name="android.permission.MANAGE_APP_OPS_MODES"
+            tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="com.oasisfeng.island.permission.FREEZE_PACKAGE"/>
+    <uses-permission android:name="com.oasisfeng.island.permission.SUSPEND_PACKAGE"/>
+
+    <application
+            android:name=".HailApp"
+            android:allowBackup="true"
+            android:enableOnBackInvokedCallback="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:description="@string/xposed_description"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.Hail"
+            tools:targetApi="tiramisu">
+        <activity
+                android:name=".ui.main.MainActivity"
+                android:exported="true"
+                android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST"/>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".ui.api.ApiActivity"
+                android:excludeFromRecents="true"
+                android:exported="true"
+                android:launchMode="singleInstance"
+                android:theme="@style/Theme.Hail.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.SHOW_APP_INFO"/>
+                <action android:name="${applicationId}.action.LAUNCH"/>
+                <action android:name="${applicationId}.action.FREEZE"/>
+                <action android:name="${applicationId}.action.UNFREEZE"/>
+                <action android:name="${applicationId}.action.FREEZE_TAG"/>
+                <action android:name="${applicationId}.action.UNFREEZE_TAG"/>
+                <action android:name="${applicationId}.action.FREEZE_ALL"/>
+                <action android:name="${applicationId}.action.UNFREEZE_ALL"/>
+                <action android:name="${applicationId}.action.FREEZE_NON_WHITELISTED"/>
+                <action android:name="${applicationId}.action.FREEZE_AUTO"/>
+                <action android:name="${applicationId}.action.LOCK"/>
+                <action android:name="${applicationId}.action.LOCK_FREEZE"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="hail"/>
+            </intent-filter>
+        </activity>
+
+        <provider
+                android:name="rikka.shizuku.ShizukuProvider"
+                android:authorities="${applicationId}.shizuku"
+                android:exported="true"
+                android:multiprocess="false"
+                android:permission="android.permission.INTERACT_ACROSS_USERS_FULL"/>
+
+        <receiver
+                android:name=".receiver.DeviceAdminReceiver"
+                android:description="@string/action_lock"
+                android:exported="false"
+                android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                    android:name="android.app.device_admin"
+                    android:resource="@xml/device_admin"/>
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+                android:name=".receiver.ScreenOffReceiver"
+                android:exported="false"/>
+        <receiver
+                android:name=".receiver.UnsuspendedReceiver"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_UNSUSPENDED_MANUALLY"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+                android:name=".services.QSTileService"
+                android:exported="true"
+                android:icon="@drawable/ic_round_frozen"
+                android:label="@string/tile_action"
+                android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+        <service
+                android:name=".services.AutoFreezeService"
+                android:foregroundServiceType="specialUse"
+                android:exported="true"
+                android:label="@string/auto_freeze"
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <property
+                    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="auto_freeze"/>
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

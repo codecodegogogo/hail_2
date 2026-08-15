@@ -1,0 +1,16 @@
+<p>Hail is a free-as-in-freedom software to freeze Android apps. Enjoy all features freely!</p>
+<h3>Freeze</h3>
+<p>Freeze is a word to describe the action of <strong>forbid apps when they are unnecessary</strong>
+    to use device
+    in a better way, cut down the usage of ram and save power. User can unfreeze it to revert.</p>
+<p>In general, &quot;freeze&quot; means disable, but also Hail can &quot;freeze&quot; apps by hiding
+    and suspending them.</p>
+<h4>Disable</h4>
+<p>Disable apps will not shown in launcher. Enable them to revert.</p>
+<h4>Hide</h4>
+<p>Hidden apps will not shown in launcher and installed app list. Unhide them to revert.</p>
+<h4>Suspend</h4>
+<p>Suspended apps will be shown as grayscale icons in the launcher. Unsuspend them to revert.</p>
+<h3>Working mode</h3>
+<p>Hail can work with <code>Device Owner</code>, <code>Dhizuku</code>, <code>Superuser</code> (Root) and
+    <code>Shizuku</code> (including Sui).</p>
