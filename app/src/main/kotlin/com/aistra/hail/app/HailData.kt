@@ -227,6 +227,16 @@ object HailData {
         } else workingMode
     }
 
+    fun appWorkingMode(appInfo: AppInfo): String {
+        val permission = workingPermission(workingMode)
+        val supportedActions = supportedWorkingActions(permission)
+        val action = tags.asSequence()
+            .filter { it.second in appInfo.tagIdList }
+            .mapNotNull { tagWorkingAction(it.second) }
+            .firstOrNull { it in supportedActions }
+        return if (action != null) permission + action else workingMode
+    }
+
     fun setTagWorkingAction(tagId: Int, action: String?) {
         if (action != null && action in WORKING_ACTION_VALUES) tagWorkingActions[tagId] = action
         else tagWorkingActions.remove(tagId)

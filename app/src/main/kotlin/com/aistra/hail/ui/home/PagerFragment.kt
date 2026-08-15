@@ -398,28 +398,42 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         updateList: Boolean = true,
         workingMode: String = HailData.workingMode
     ) {
+        val result = executeListFrozen(frozen, list, workingMode) ?: return
+        if (updateList) updateCurrentList()
+        HUI.showToast(workingMode.operationMessageId(frozen), result)
+    }
+
+    private fun setAllAppsFrozen(frozen: Boolean) {
+        val messages = HailData.checkedList.groupBy(HailData::appWorkingMode).mapNotNull { (workingMode, apps) ->
+            executeListFrozen(frozen, apps, workingMode)?.let { result ->
+                getString(workingMode.operationMessageId(frozen), result)
+            }
+        }
+        updateCurrentList()
+        if (messages.isNotEmpty()) HUI.showToast(
+            messages.joinToString(separator = "\n"), isLengthLong = messages.size > 1
+        )
+    }
+
+    private fun executeListFrozen(
+        frozen: Boolean, list: List<AppInfo>, workingMode: String
+    ): String? {
         if (workingMode == HailData.MODE_DEFAULT) {
             MaterialAlertDialogBuilder(activity).setMessage(R.string.msg_guide)
                 .setPositiveButton(android.R.string.ok, null).show()
-            return
+            return null
         } else if (workingMode == HailData.MODE_SHIZUKU_HIDE) {
             runCatching { HShizuku.isRoot }.onSuccess {
                 if (!it) {
                     MaterialAlertDialogBuilder(activity).setMessage(R.string.shizuku_hide_adb)
                         .setPositiveButton(android.R.string.ok, null).show()
-                    return
+                    return null
                 }
             }
         }
         val filtered = list.filter { AppManager.isAppFrozen(it.packageName, workingMode) != frozen }
-        when (val result = AppManager.setListFrozen(frozen, workingMode, *filtered.toTypedArray())) {
-            null -> HUI.showToast(R.string.permission_denied)
-            else -> {
-                if (updateList) updateCurrentList()
-                HUI.showToast(
-                    if (frozen) R.string.msg_freeze else R.string.msg_unfreeze, result
-                )
-            }
+        return AppManager.setListFrozen(frozen, workingMode, *filtered.toTypedArray()).also {
+            if (it == null) HUI.showToast(R.string.permission_denied)
         }
     }
 
@@ -564,15 +578,8 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
                 } else deselect()
             }
 
-            R.id.action_freeze_current -> setListFrozen(
-                true, pagerAdapter.currentList.filterNot { it.whitelisted }, workingMode = tagWorkingMode
-            )
-
-            R.id.action_unfreeze_current -> setListFrozen(
-                false, pagerAdapter.currentList, workingMode = tagWorkingMode
-            )
-            R.id.action_freeze_all -> setListFrozen(true)
-            R.id.action_unfreeze_all -> setListFrozen(false)
+            R.id.action_freeze_all -> setAllAppsFrozen(true)
+            R.id.action_unfreeze_all -> setAllAppsFrozen(false)
             R.id.action_freeze_non_whitelisted -> setListFrozen(true, HailData.checkedList.filterNot { it.whitelisted })
 
             R.id.action_import_clipboard -> importFromClipboard()
@@ -623,5 +630,13 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         HailData.HIDE -> R.string.working_action_hide
         HailData.SUSPEND -> R.string.working_action_suspend
         else -> R.string.working_action_unavailable
+    }
+
+    private fun String.operationMessageId(frozen: Boolean): Int = when (HailData.workingAction(this)) {
+        HailData.STOP -> if (frozen) R.string.msg_force_stopped else R.string.msg_restored
+        HailData.DISABLE -> if (frozen) R.string.msg_disabled else R.string.msg_enabled
+        HailData.HIDE -> if (frozen) R.string.msg_hidden else R.string.msg_unhidden
+        HailData.SUSPEND -> if (frozen) R.string.msg_suspended else R.string.msg_unsuspended
+        else -> if (frozen) R.string.msg_freeze else R.string.msg_unfreeze
     }
 }

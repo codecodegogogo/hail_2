@@ -21,6 +21,12 @@
     <string name="action_unfreeze_current">非解凍可見</string>
     <string name="action_open_freeze_menu">開啟凍結操作</string>
     <string name="action_close_freeze_menu">關閉凍結操作</string>
+    <string name="action_operate_all">全部操作</string>
+    <string name="action_restore_all">全部恢復</string>
+    <string name="action_operate_current">操作可見</string>
+    <string name="action_restore_current">恢復可見</string>
+    <string name="action_open_operation_menu">開啟操作選單</string>
+    <string name="action_close_operation_menu">關閉操作選單</string>
     <string name="action_lock">螢幕鎖定</string>
     <string name="action_lock_freeze">螢幕鎖定凍結</string>
     <string name="action_launch">啟動</string>
@@ -100,6 +106,14 @@
     <string name="msg_extract_apk">已擷取至：%s</string>
     <string name="msg_freeze">已凍結：%s</string>
     <string name="msg_unfreeze">已解凍：%s</string>
+    <string name="msg_force_stopped">已強制停止：%s</string>
+    <string name="msg_restored">已恢復：%s</string>
+    <string name="msg_disabled">已停用：%s</string>
+    <string name="msg_enabled">已啟用：%s</string>
+    <string name="msg_hidden">已隱藏：%s</string>
+    <string name="msg_unhidden">已取消隱藏：%s</string>
+    <string name="msg_suspended">已暫停：%s</string>
+    <string name="msg_unsuspended">已取消暫停：%s</string>
     <plurals name="deferred_task_entry">
         <item quantity="other">%d 分鐘</item>
     </plurals>

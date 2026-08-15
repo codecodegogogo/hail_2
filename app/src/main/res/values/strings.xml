@@ -22,6 +22,12 @@
     <string name="action_unfreeze_current">Unfreeze visible</string>
     <string name="action_open_freeze_menu">Open freeze actions</string>
     <string name="action_close_freeze_menu">Close freeze actions</string>
+    <string name="action_operate_all">Operate all</string>
+    <string name="action_restore_all">Restore all</string>
+    <string name="action_operate_current">Operate visible</string>
+    <string name="action_restore_current">Restore visible</string>
+    <string name="action_open_operation_menu">Open operation menu</string>
+    <string name="action_close_operation_menu">Close operation menu</string>
     <string name="action_freeze_non_whitelisted">Freeze non-whitelisted</string>
     <string name="action_lock">Lock</string>
     <string name="action_lock_freeze">Lock &amp; Freeze</string>
@@ -108,6 +114,14 @@
     <string name="msg_extract_apk">Extracted to: %s</string>
     <string name="msg_freeze">Froze: %s</string>
     <string name="msg_unfreeze">Unfroze: %s</string>
+    <string name="msg_force_stopped">Force stopped: %s</string>
+    <string name="msg_restored">Restored: %s</string>
+    <string name="msg_disabled">Disabled: %s</string>
+    <string name="msg_enabled">Enabled: %s</string>
+    <string name="msg_hidden">Hidden: %s</string>
+    <string name="msg_unhidden">Unhidden: %s</string>
+    <string name="msg_suspended">Suspended: %s</string>
+    <string name="msg_unsuspended">Unsuspended: %s</string>
     <plurals name="deferred_task_entry">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

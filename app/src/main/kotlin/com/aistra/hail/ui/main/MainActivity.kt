@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
         fab.animate().rotation(if (expanded) -45f else 0f).setDuration(200L).start()
         fab.contentDescription = getString(
-            if (expanded) R.string.action_close_freeze_menu else R.string.action_open_freeze_menu
+            if (expanded) R.string.action_close_operation_menu else R.string.action_open_operation_menu
         )
     }
 
