@@ -2,7 +2,6 @@ package com.aistra.hail.utils
 
 import android.app.ActivityManager
 import android.app.AppOpsManager
-import android.content.ComponentName
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
@@ -100,29 +99,6 @@ object HPackages {
         }
         return isAppDisabled(packageName) == disabled
     }
-
-    fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean = runCatching {
-        app.packageManager.setComponentEnabledSetting(
-            componentName,
-            if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-        true
-    }.getOrElse {
-        HLog.e(it)
-        false
-    }
-
-    fun isComponentEnabled(componentName: ComponentName): Boolean = runCatching {
-        when (app.packageManager.getComponentEnabledSetting(componentName)) {
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED -> true
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED -> false
-            else -> app.packageManager.getActivityInfo(componentName, 0).enabled
-        }
-    }.getOrDefault(false)
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun setAppRestricted(packageName: String, restricted: Boolean): Boolean = runCatching {

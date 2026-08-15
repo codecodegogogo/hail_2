@@ -4,7 +4,6 @@
     <string name="app_name">Hail</string>
     <string name="app_slogan">Freezedom!</string>
     <string name="title_home">Home</string>
-    <string name="title_launcher">Launcher</string>
     <string name="title_apps">Apps</string>
     <string name="title_settings">Settings</string>
     <string name="title_about">About</string>
@@ -111,15 +110,6 @@
     <string name="skip_foreground_app">Skip foreground app</string>
     <string name="title_customize">Customize</string>
     <string name="calendar_disguise">Enable calendar disguise</string>
-    <string name="title_iconless_launcher">Iconless app launcher</string>
-    <string name="iconless_launcher_enabled">Enabled</string>
-    <string name="iconless_launcher_empty">No apps added</string>
-    <string name="iconless_launcher_no_apps">No apps available to add</string>
-    <string name="iconless_launcher_delete_mode">Remove apps</string>
-    <string name="iconless_launcher_operation_failed">The current working mode cannot change app launcher icons</string>
-    <string name="iconless_launcher_launch_failed">Unable to launch this app</string>
-    <string name="action_add_launcher_app">Add app</string>
-    <string name="action_remove_launcher">Remove app</string>
     <string name="grayscale_icon">Grayscale icon</string>
     <string name="compact_icon">Compact icon</string>
     <string name="action_biometric">Biometric login</string>
