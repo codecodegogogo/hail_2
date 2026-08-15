@@ -120,7 +120,10 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         else (FuzzySearch.search(it.packageName, query) || FuzzySearch.search(
             it.name.toString(), query
         ) || PinyinSearch.searchPinyinAll(it.name.toString(), query))
-    }.sortedWith(NameComparator).let {
+    }.sortedWith(
+        compareBy<AppInfo> { HPackages.isAppUninstalled(it.packageName) }
+            .then(NameComparator)
+    ).let {
         binding.empty.isVisible = it.isEmpty()
         pagerAdapter.workingMode = tagWorkingMode
         pagerAdapter.submitList(it)
