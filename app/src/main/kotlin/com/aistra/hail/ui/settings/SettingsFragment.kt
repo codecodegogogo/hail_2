@@ -34,6 +34,7 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.aistra.hail.HailApp.Companion.app
 import com.aistra.hail.R
 import com.aistra.hail.app.AppManager
@@ -136,7 +137,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 icon = Icons.AutoMirrored.Outlined.ManageSearch
             )
             horizontalDivider()
-            preferenceCategory(key = "auto_freeze", title = { Text(text = stringResource(R.string.auto_freeze)) })
+            preferenceCategory(key = "auto_operation", title = { Text(text = stringResource(R.string.auto_operation)) })
             switchPreference(
                 rememberState = { autoFreezeAfterLock },
                 onValueChange = { _, value ->
@@ -149,7 +150,7 @@ class SettingsFragment : MainFragment(), MenuProvider {
             sliderPreference(
                 key = HailData.AUTO_FREEZE_DELAY,
                 defaultValue = 0f,
-                title = { Text(text = stringResource(R.string.auto_freeze_delay)) },
+                title = { Text(text = stringResource(R.string.auto_operation_delay)) },
                 valueRange = 0f..30f,
                 valueSteps = 29,
                 enabled = { autoFreezeAfterLock.value },
@@ -192,6 +193,15 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 enabled = autoFreezeAfterLock.value,
                 icon = Icons.Outlined.NotificationsActive
             )
+            horizontalDivider()
+            preferenceCategory(key = "other", title = { Text(text = stringResource(R.string.title_other)) })
+            item(key = "about", contentType = "Preference") {
+                Preference(
+                    title = { Text(text = stringResource(R.string.title_about)) },
+                    icon = { Spacer(modifier = Modifier.size(24.dp)) },
+                    onClick = { findNavController().navigate(R.id.nav_about) }
+                )
+            }
         }
     }
 

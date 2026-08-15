@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     lateinit var fabMenu: View
     lateinit var appbar: AppBarLayout
     private var fabMenuExpanded = false
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +74,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         appbar = appBarMain.appBarLayout
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
         navController.addOnDestinationChangedListener(this@MainActivity)
         val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.nav_home, R.id.nav_apps, R.id.nav_settings, R.id.nav_about
+            R.id.nav_home, R.id.nav_apps, R.id.nav_settings
         ).build()
         setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNav?.setupWithNavController(navController)
@@ -147,6 +148,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         fab.tag = destination.id == R.id.nav_home
         if (fab.tag == true) fab.show() else fab.hide()
     }
+
+    override fun onSupportNavigateUp(): Boolean =
+        navController.navigateUp() || super.onSupportNavigateUp()
 
     override fun onDestroy() {
         if (!isChangingConfigurations) DisguiseSession.unlocked = false

@@ -404,9 +404,17 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
     }
 
     private fun setAllAppsFrozen(frozen: Boolean) {
-        val messages = HailData.checkedList.groupBy(HailData::appWorkingMode).mapNotNull { (workingMode, apps) ->
-            executeListFrozen(frozen, apps, workingMode)?.let { result ->
-                getString(workingMode.operationMessageId(frozen), result)
+        val messages = HailData.checkedList.groupBy(HailData::appWorkingModeTag).mapNotNull { (tagMode, apps) ->
+            val (tagId, workingMode) = tagMode
+            executeListFrozen(frozen, apps, workingMode)?.let {
+                val groupName = tagId?.let { id ->
+                    HailData.tags.firstOrNull { it.second == id }?.first?.let(::tagDisplayName)
+                } ?: getString(R.string.default_working_mode)
+                getString(
+                    R.string.msg_tag_operation,
+                    groupName,
+                    getString(workingMode.operationStatusId(frozen))
+                )
             }
         }
         updateCurrentList()
@@ -638,5 +646,19 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         HailData.HIDE -> if (frozen) R.string.msg_hidden else R.string.msg_unhidden
         HailData.SUSPEND -> if (frozen) R.string.msg_suspended else R.string.msg_unsuspended
         else -> if (frozen) R.string.msg_freeze else R.string.msg_unfreeze
+    }
+
+    private fun String.operationStatusId(frozen: Boolean): Int = when (HailData.workingAction(this)) {
+        HailData.STOP -> if (frozen) R.string.status_force_stopped else R.string.status_restored
+        HailData.DISABLE -> if (frozen) R.string.status_disabled else R.string.status_enabled
+        HailData.HIDE -> if (frozen) R.string.status_hidden else R.string.status_unhidden
+        HailData.SUSPEND -> if (frozen) R.string.status_suspended else R.string.status_unsuspended
+        else -> if (frozen) R.string.action_freeze else R.string.action_unfreeze
+    }
+
+    private fun tagDisplayName(tagName: String): String {
+        val suffix = getString(R.string.tag)
+        return if (tagName.endsWith(suffix, ignoreCase = true)) tagName
+        else getString(R.string.tag_name_format, tagName)
     }
 }

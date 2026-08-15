@@ -7,6 +7,7 @@
     <string name="title_apps">应用</string>
     <string name="title_settings">设置</string>
     <string name="title_about">关于</string>
+    <string name="title_other">其他</string>
     <string name="label_default">默认</string>
     <string name="label_version">版本</string>
     <string name="label_time">安装时间</string>
@@ -28,6 +29,19 @@
     <string name="action_restore_current">恢复可见</string>
     <string name="action_open_operation_menu">打开操作菜单</string>
     <string name="action_close_operation_menu">关闭操作菜单</string>
+    <string name="auto_operation">自动操作</string>
+    <string name="auto_operation_delay">操作延时（分钟）</string>
+    <string name="default_working_mode">默认模式</string>
+    <string name="tag_name_format">%1$s标签</string>
+    <string name="msg_tag_operation">%1$s%2$s</string>
+    <string name="status_force_stopped">已强行停止</string>
+    <string name="status_restored">已恢复</string>
+    <string name="status_disabled">已停用</string>
+    <string name="status_enabled">已启用</string>
+    <string name="status_hidden">已隐藏</string>
+    <string name="status_unhidden">已取消隐藏</string>
+    <string name="status_suspended">已暂停</string>
+    <string name="status_unsuspended">已取消暂停</string>
     <string name="action_lock">锁屏</string>
     <string name="action_lock_freeze">冻结并锁屏</string>
     <string name="action_launch">启动</string>
