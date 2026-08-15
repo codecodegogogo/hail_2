@@ -2,9 +2,7 @@ package com.aistra.hail.ui.home
 
 import android.os.Bundle
 import android.provider.Settings
-import android.text.InputType
 import android.view.*
-import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,8 +31,6 @@ import com.aistra.hail.HailApp.Companion.app
 import com.aistra.hail.R
 import com.aistra.hail.app.AppInfo
 import com.aistra.hail.app.AppManager
-import com.aistra.hail.app.HailApi
-import com.aistra.hail.app.HailApi.addTag
 import com.aistra.hail.app.HailData
 import com.aistra.hail.databinding.DialogInputBinding
 import com.aistra.hail.databinding.FragmentPagerBinding
@@ -79,9 +75,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
         }
         binding.recyclerView.run {
             layoutManager = GridLayoutManager(
-                activity, resources.getInteger(
-                    if (HailData.compactIcon) R.integer.home_span_compact else R.integer.home_span
-                )
+                activity, resources.getInteger(R.integer.home_span)
             )
             adapter = pagerAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -130,9 +124,7 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
 
     private fun updateCurrentList() = HailData.checkedList.filter {
         if (query.isEmpty()) tag.second in it.tagIdList
-        else ((HailData.nineKeySearch && NineKeySearch.search(
-            query, it.packageName, it.name.toString()
-        )) || FuzzySearch.search(it.packageName, query) || FuzzySearch.search(
+        else (FuzzySearch.search(it.packageName, query) || FuzzySearch.search(
             it.name.toString(), query
         ) || PinyinSearch.searchPinyinAll(it.name.toString(), query))
     }.sortedWith(NameComparator).let {
@@ -220,26 +212,9 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
 
                 5 -> tagDialog(info)
 
-                6 -> if (tabs.tabCount > 1) MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.action_unfreeze_tag)
-                    .setItems(HailData.tags.map { it.first }.toTypedArray()) { _, index ->
-                        HShortcuts.addPinShortcut(
-                            info,
-                            pkg,
-                            info.name,
-                            HailApi.getIntentForPackage(HailApi.ACTION_LAUNCH, pkg).addTag(HailData.tags[index].first)
-                        )
-                    }.setPositiveButton(R.string.action_skip) { _, _ ->
-                        HShortcuts.addPinShortcut(
-                            info, pkg, info.name, HailApi.getIntentForPackage(HailApi.ACTION_LAUNCH, pkg)
-                        )
-                    }.setNegativeButton(android.R.string.cancel, null).show()
-                else HShortcuts.addPinShortcut(
-                    info, pkg, info.name, HailApi.getIntentForPackage(HailApi.ACTION_LAUNCH, pkg)
-                )
-
-                7 -> exportToClipboard(listOf(info))
-                8 -> removeCheckedApp(pkg)
-                9 -> {
+                6 -> exportToClipboard(listOf(info))
+                7 -> removeCheckedApp(pkg)
+                8 -> {
                     setListFrozen(false, listOf(info), false)
                     if (!AppManager.isAppFrozen(pkg)) removeCheckedApp(pkg)
                 }
@@ -413,7 +388,6 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
             HIsland.ensureLaunchIntentExists(packageName)
         }
         app.packageManager.getLaunchIntentForPackage(packageName)?.let {
-            HShortcuts.addDynamicShortcut(packageName)
             startActivity(it)
         } ?: HUI.showToast(R.string.activity_not_found)
     }
@@ -583,10 +557,6 @@ class PagerFragment : MainFragment(), PagerAdapter.OnItemClickListener, PagerAda
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_home, menu)
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        if (HailData.nineKeySearch) {
-            val editText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
-            editText.inputType = InputType.TYPE_CLASS_PHONE
-        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             private var inited = false
             override fun onQueryTextChange(newText: String): Boolean {

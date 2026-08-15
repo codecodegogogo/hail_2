@@ -18,7 +18,6 @@
         <item>@string/action_whitelist</item>
         <item>@string/action_remove_whitelist</item>
         <item>@string/action_tag_set</item>
-        <item>@string/action_add_pin_shortcut</item>
         <item>@string/action_export_clipboard</item>
         <item>@string/action_remove_home</item>
         <item>@string/action_unfreeze_remove_home</item>
@@ -60,25 +59,8 @@
         <item>@string/donate_liberapay</item>
         <item>@string/donate_paypal</item>
     </string-array>
-    <string-array name="pin_shortcut_entries">
-        <item>@string/action_freeze_tag</item>
-        <item>@string/action_unfreeze_tag</item>
-        <item>@string/action_freeze_all</item>
-        <item>@string/action_unfreeze_all</item>
-        <item>@string/action_freeze_non_whitelisted</item>
-        <item>@string/action_lock</item>
-        <item>@string/action_lock_freeze</item>
-    </string-array>
     <string-array name="tile_action_entries">
         <item>@string/auto_freeze</item>
-        <item>@string/action_freeze_all</item>
-        <item>@string/action_unfreeze_all</item>
-        <item>@string/action_freeze_non_whitelisted</item>
-        <item>@string/action_lock</item>
-        <item>@string/action_lock_freeze</item>
-    </string-array>
-    <string-array name="dynamic_shortcut_entries">
-        <item>@string/action_none</item>
         <item>@string/action_freeze_all</item>
         <item>@string/action_unfreeze_all</item>
         <item>@string/action_freeze_non_whitelisted</item>

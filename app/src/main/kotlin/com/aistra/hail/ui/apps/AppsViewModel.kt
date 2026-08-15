@@ -96,9 +96,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                         && ((HailData.filterFrozenApps && it.isAppFrozen)
                         || (HailData.filterUnfrozenApps && !it.isAppFrozen))
                         // Search apps
-                        && ((HailData.nineKeySearch
-                        && (NineKeySearch.search(query, it.packageName, it.loadLabel(pm).toString())))
-                        || FuzzySearch.search(it.packageName, query)
+                        && (FuzzySearch.search(it.packageName, query)
                         || FuzzySearch.search(it.loadLabel(pm).toString(), query)
                         || PinyinSearch.searchPinyinAll(it.loadLabel(pm).toString(), query))
             }.run {

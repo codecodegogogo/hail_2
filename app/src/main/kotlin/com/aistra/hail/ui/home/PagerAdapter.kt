@@ -41,8 +41,7 @@ class PagerAdapter(
                         context,
                         it,
                         myUserId,
-                        this,
-                        HailData.grayscaleIcon && info.state == AppInfo.State.FROZEN
+                        this
                     )
                 } ?: run {
                     setImageDrawable(context.packageManager.defaultActivityIcon)
@@ -51,11 +50,11 @@ class PagerAdapter(
             }
             findViewById<TextView>(R.id.app_name).run {
                 text = buildString {
-                    if (!HailData.grayscaleIcon && info.state == AppInfo.State.FROZEN) append("\u2744\uFE0F")
+                    if (info.state == AppInfo.State.FROZEN) append("\u2744\uFE0F")
                     if (info.whitelisted) append("\uD83D\uDD12")
                     append(info.name)
                 }
-                isEnabled = !HailData.grayscaleIcon || info.state != AppInfo.State.FROZEN
+                isEnabled = true
                 when {
                     info in selectedList -> setTextColor(
                         MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary)

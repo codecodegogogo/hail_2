@@ -9,7 +9,6 @@ import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ManageSearch
-import androidx.compose.material.icons.automirrored.outlined.Shortcut
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -39,7 +37,6 @@ import androidx.lifecycle.lifecycleScope
 import com.aistra.hail.HailApp.Companion.app
 import com.aistra.hail.R
 import com.aistra.hail.app.AppManager
-import com.aistra.hail.app.HailApi
 import com.aistra.hail.app.HailData
 import com.aistra.hail.databinding.DialogInputBinding
 import com.aistra.hail.ui.main.MainActivity
@@ -95,10 +92,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
             switchPreference(
                 key = HailData.BIOMETRIC_LOGIN,
                 defaultValue = false,
-                onValueChange = { _, value ->
-                    if (value) resetDynamicShortcuts()
-                    true
-                },
                 titleId = R.string.action_biometric,
                 icon = Icons.Outlined.Fingerprint
             )
@@ -126,43 +119,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 titleId = R.string.app_theme,
                 icon = Icons.Outlined.DarkMode
             )
-            listPreference(
-                key = HailData.ICON_PACK,
-                defaultValue = HailData.ACTION_NONE,
-                onValueChange = { _, _ ->
-                    AppIconCache.clear()
-                    true
-                },
-                values = mutableListOf(HailData.ACTION_NONE).apply {
-                    addAll(Intent(Intent.ACTION_MAIN).addCategory("com.anddoes.launcher.THEME").let {
-                        if (HTarget.T) app.packageManager.queryIntentActivities(
-                            it, PackageManager.ResolveInfoFlags.of(0)
-                        ) else app.packageManager.queryIntentActivities(it, 0)
-                    }.map { it.activityInfo.packageName })
-                },
-                titleId = R.string.icon_pack,
-                icon = Icons.Outlined.Palette,
-                summary = { iconPackName(it) },
-                valueToText = ::iconPackName
-            )
-            switchPreference(
-                key = HailData.GRAYSCALE_ICON,
-                defaultValue = true,
-                titleId = R.string.grayscale_icon,
-                icon = Icons.Outlined.FilterBAndW
-            )
-            switchPreference(
-                key = HailData.COMPACT_ICON,
-                defaultValue = false,
-                titleId = R.string.compact_icon,
-                icon = Icons.Outlined.Apps
-            )
-            switchPreference(
-                key = HailData.SYNTHESIZE_ADAPTIVE_ICONS,
-                defaultValue = false,
-                titleId = R.string.synthesize_adaptive_icons,
-                icon = Icons.Outlined.Layers
-            )
             sliderPreference(
                 key = HailData.HOME_FONT_SIZE,
                 defaultValue = 14f,
@@ -177,12 +133,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 defaultValue = false,
                 titleId = R.string.fuzzy_search,
                 icon = Icons.AutoMirrored.Outlined.ManageSearch
-            )
-            switchPreference(
-                key = HailData.NINE_KEY_SEARCH,
-                defaultValue = false,
-                titleId = R.string.nine_key,
-                icon = Icons.Outlined.Dialpad
             )
             listPreference(
                 key = HailData.TILE_ACTION,
@@ -248,33 +198,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 titleId = R.string.skip_notifying_app,
                 enabled = autoFreezeAfterLock.value,
                 icon = Icons.Outlined.NotificationsActive
-            )
-            horizontalDivider()
-            preferenceCategory(key = "shortcuts", title = { Text(text = stringResource(R.string.title_shortcuts)) })
-            preference(
-                key = "add_pin_shortcut",
-                title = { Text(text = stringResource(R.string.action_add_pin_shortcut)) },
-                icon = { Icon(imageVector = Icons.AutoMirrored.Outlined.Shortcut, contentDescription = null) },
-                onClick = ::addPinShortcut
-            )
-            listPreference(
-                key = HailData.DYNAMIC_SHORTCUT_ACTION,
-                defaultValue = HailData.ACTION_NONE,
-                onValueChange = { _, action ->
-                    HShortcuts.removeAllDynamicShortcuts()
-                    HShortcuts.addDynamicShortcutAction(action)
-                    true
-                },
-                values = HailData.DYNAMIC_SHORTCUT_ACTIONS,
-                entriesId = R.array.dynamic_shortcut_entries,
-                titleId = R.string.dynamic_shortcut_action,
-                icon = Icons.Outlined.AppShortcut
-            )
-            preference(
-                key = "clear_dynamic_shortcuts",
-                title = { Text(text = stringResource(R.string.action_clear_dynamic_shortcuts)) },
-                icon = { Icon(imageVector = Icons.Outlined.CleaningServices, contentDescription = null) },
-                onClick = ::resetDynamicShortcuts
             )
         }
     }
@@ -361,11 +284,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
     private fun String.toEntry(values: List<String>, @ArrayRes entriesId: Int): String =
         resources.getStringArray(entriesId)[values.indexOf(this)]
 
-    private fun resetDynamicShortcuts() {
-        HShortcuts.removeAllDynamicShortcuts()
-        HShortcuts.addDynamicShortcutAction(HailData.dynamicShortcutAction)
-    }
-
     private fun setCalendarDisguiseEnabled(enabled: Boolean) {
         val packageManager = requireContext().packageManager
         val calendarLauncher = ComponentName(
@@ -386,84 +304,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
-    }
-
-    private fun iconPackName(pack: String): String = if (pack == HailData.ACTION_NONE) getString(R.string.action_none)
-    else HPackages.getApplicationInfoOrNull(pack)?.loadLabel(app.packageManager)?.toString() ?: pack
-
-    private fun addPinShortcut() {
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.action_add_pin_shortcut)
-            .setItems(R.array.pin_shortcut_entries) { _, which ->
-                when (which) {
-                    0 -> MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.action_freeze_tag)
-                        .setItems(HailData.tags.map { it.first }.toTypedArray()) { _, index ->
-                            val tag = HailData.tags[index].first
-                            HShortcuts.addPinShortcut(
-                                AppCompatResources.getDrawable(
-                                    requireContext(), R.drawable.ic_round_frozen_shortcut
-                                )!!,
-                                HailApi.ACTION_FREEZE_TAG + tag,
-                                tag,
-                                HailApi.getIntentForTag(HailApi.ACTION_FREEZE_TAG, tag)
-                            )
-                        }.setNegativeButton(android.R.string.cancel, null).show()
-
-                    1 -> MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.action_unfreeze_tag)
-                        .setItems(HailData.tags.map { it.first }.toTypedArray()) { _, index ->
-                            val tag = HailData.tags[index].first
-                            HShortcuts.addPinShortcut(
-                                AppCompatResources.getDrawable(
-                                    requireContext(), R.drawable.ic_round_unfrozen_shortcut
-                                )!!,
-                                HailApi.ACTION_UNFREEZE_TAG + tag,
-                                tag,
-                                HailApi.getIntentForTag(HailApi.ACTION_UNFREEZE_TAG, tag)
-                            )
-                        }.setNegativeButton(android.R.string.cancel, null).show()
-
-                    2 -> HShortcuts.addPinShortcut(
-                        AppCompatResources.getDrawable(
-                            requireContext(), R.drawable.ic_round_frozen_shortcut
-                        )!!,
-                        HailApi.ACTION_FREEZE_ALL,
-                        getString(R.string.action_freeze_all),
-                        Intent(HailApi.ACTION_FREEZE_ALL)
-                    )
-
-                    3 -> HShortcuts.addPinShortcut(
-                        AppCompatResources.getDrawable(
-                            requireContext(), R.drawable.ic_round_unfrozen_shortcut
-                        )!!,
-                        HailApi.ACTION_UNFREEZE_ALL,
-                        getString(R.string.action_unfreeze_all),
-                        Intent(HailApi.ACTION_UNFREEZE_ALL)
-                    )
-
-                    4 -> HShortcuts.addPinShortcut(
-                        AppCompatResources.getDrawable(
-                            requireContext(), R.drawable.ic_round_frozen_shortcut
-                        )!!,
-                        HailApi.ACTION_FREEZE_NON_WHITELISTED,
-                        getString(R.string.action_freeze_non_whitelisted),
-                        Intent(HailApi.ACTION_FREEZE_NON_WHITELISTED)
-                    )
-
-                    5 -> HShortcuts.addPinShortcut(
-                        AppCompatResources.getDrawable(
-                            requireContext(), R.drawable.ic_outline_lock_shortcut
-                        )!!, HailApi.ACTION_LOCK, getString(R.string.action_lock), Intent(HailApi.ACTION_LOCK)
-                    )
-
-                    6 -> HShortcuts.addPinShortcut(
-                        AppCompatResources.getDrawable(
-                            requireContext(), R.drawable.ic_outline_lock_shortcut
-                        )!!,
-                        HailApi.ACTION_LOCK_FREEZE,
-                        getString(R.string.action_lock_freeze),
-                        Intent(HailApi.ACTION_LOCK_FREEZE)
-                    )
-                }
-            }.setNegativeButton(android.R.string.cancel, null).show()
     }
 
     fun onWorkingModeChange(rememberState: MutableState<String>, mode: String): Boolean {

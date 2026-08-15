@@ -93,15 +93,9 @@ object HailData {
     const val THEME_DARK = "theme_dark"
     val APP_THEME_VALUES = listOf(FOLLOW_SYSTEM, THEME_LIGHT, THEME_DARK)
     const val CALENDAR_DISGUISE = "calendar_disguise"
-    const val ICON_PACK = "icon_pack"
-    const val GRAYSCALE_ICON = "grayscale_icon"
-    const val COMPACT_ICON = "compact_icon"
-    const val SYNTHESIZE_ADAPTIVE_ICONS = "synthesize_adaptive_icons"
     const val HOME_FONT_SIZE = "home_font_size_f"
     const val FUZZY_SEARCH = "fuzzy_search"
-    const val NINE_KEY_SEARCH = "nine_key"
     const val TILE_ACTION = "tile_action"
-    const val ACTION_NONE = "none"
     const val ACTION_FREEZE_ALL = "freeze_all"
     const val ACTION_UNFREEZE_ALL = "unfreeze_all"
     const val ACTION_FREEZE_NON_WHITELISTED = "freeze_non_whitelisted"
@@ -121,15 +115,6 @@ object HailData {
     const val SKIP_WHILE_CHARGING = "skip_while_charging"
     const val SKIP_FOREGROUND_APP = "skip_foreground_app"
     const val SKIP_NOTIFYING_APP = "skip_notifying_app"
-    const val DYNAMIC_SHORTCUT_ACTION = "dynamic_shortcut_action"
-    val DYNAMIC_SHORTCUT_ACTIONS = listOf(
-        ACTION_NONE,
-        ACTION_FREEZE_ALL,
-        ACTION_UNFREEZE_ALL,
-        ACTION_FREEZE_NON_WHITELISTED,
-        ACTION_LOCK,
-        ACTION_LOCK_FREEZE
-    )
 
     private val sp = PreferenceManager.getDefaultSharedPreferences(app)
     val sortBy get() = sp.getString(SORT_BY, SORT_NAME)
@@ -141,13 +126,8 @@ object HailData {
     val biometricLogin get() = sp.getBoolean(BIOMETRIC_LOGIN, false)
     val calendarDisguise get() = sp.getBoolean(CALENDAR_DISGUISE, true)
     val appTheme get() = sp.getString(APP_THEME, FOLLOW_SYSTEM)!!
-    val iconPack get() = sp.getString(ICON_PACK, ACTION_NONE)!!
-    val grayscaleIcon get() = sp.getBoolean(GRAYSCALE_ICON, true)
-    val compactIcon get() = sp.getBoolean(COMPACT_ICON, false)
-    val synthesizeAdaptiveIcons get() = sp.getBoolean(SYNTHESIZE_ADAPTIVE_ICONS, false)
     val homeFontSize get() = sp.getFloat(HOME_FONT_SIZE, 14f)
     val fuzzySearch get() = sp.getBoolean(FUZZY_SEARCH, false)
-    val nineKeySearch get() = sp.getBoolean(NINE_KEY_SEARCH, false)
     val tileAction get() = sp.getString(TILE_ACTION, AUTO_FREEZE_AFTER_LOCK)!!
     var autoFreezeAfterLock
         get() = sp.getBoolean(AUTO_FREEZE_AFTER_LOCK, false)
@@ -156,7 +136,6 @@ object HailData {
     val skipWhileCharging get() = sp.getBoolean(SKIP_WHILE_CHARGING, false)
     val skipForegroundApp get() = sp.getBoolean(SKIP_FOREGROUND_APP, false)
     val skipNotifyingApp get() = sp.getBoolean(SKIP_NOTIFYING_APP, false)
-    val dynamicShortcutAction get() = sp.getString(DYNAMIC_SHORTCUT_ACTION, ACTION_NONE)!!
 
     private val dir = "${app.filesDir.path}/v1"
     private val appsPath = "$dir/apps.json"

@@ -6,6 +6,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ShortcutManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
@@ -19,6 +21,9 @@ class HailApp : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            getSystemService<ShortcutManager>()?.removeAllDynamicShortcuts()
+        }
         // DirtyDataUpdater.update(app)
         if (!HTarget.S) setAppTheme(HailData.appTheme)
         if (HailData.workingMode.startsWith(HailData.DHIZUKU)) HDhizuku.init()

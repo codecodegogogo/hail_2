@@ -71,13 +71,13 @@ class AppsAdapter : ListAdapter<ApplicationInfo, AppsAdapter.ViewHolder>(DIFF) {
 
             binding.appIcon.apply {
                 loadIconJob = AppIconCache.loadIconBitmapAsync(
-                    context, info, HPackages.myUserId, this, HailData.grayscaleIcon && frozen
+                    context, info, HPackages.myUserId, this
                 )
             }
             binding.appName.apply {
                 val name = info.loadLabel(context.packageManager)
-                text = if (!HailData.grayscaleIcon && frozen) "❄️$name" else name
-                isEnabled = !HailData.grayscaleIcon || !frozen
+                text = if (frozen) "❄️$name" else name
+                isEnabled = true
                 if (HPackages.isAppUninstalled(pkg)) setTextColor(
                     MaterialColors.getColor(
                         this, androidx.appcompat.R.attr.colorError
@@ -87,7 +87,7 @@ class AppsAdapter : ListAdapter<ApplicationInfo, AppsAdapter.ViewHolder>(DIFF) {
             }
             binding.appDesc.apply {
                 text = pkg
-                isEnabled = !HailData.grayscaleIcon || !frozen
+                isEnabled = true
             }
             binding.appStar.isChecked = HailData.isChecked(pkg)
             updating = false
