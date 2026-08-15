@@ -175,15 +175,42 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                         val sourceIndex = initialState.first * 12 + initialState.second
                         val targetIndex = targetState.first * 12 + targetState.second
                         val direction = if (targetIndex > sourceIndex) 1 else -1
-                        (slideInHorizontally(tween(220)) { width -> direction * width } + fadeIn(tween(180)))
+                        (slideInHorizontally(tween(180)) { width -> direction * width } + fadeIn(tween(140)))
                             .togetherWith(
-                                slideOutHorizontally(tween(180)) { width -> -direction * width } +
-                                    fadeOut(tween(140))
+                                slideOutHorizontally(tween(150)) { width -> -direction * width } +
+                                    fadeOut(tween(120))
                             )
                     },
                     label = "calendarMonth"
                 ) { (year, month) ->
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .semantics {
+                                contentDescription = if (Locale.getDefault().language == "zh") {
+                                    "日历，左右滑动切换月份"
+                                } else {
+                                    "Calendar, swipe left or right to change month"
+                                }
+                            }
+                            .pointerInput(year, month) {
+                                var horizontalDrag = 0f
+                                val swipeThreshold = 32.dp.toPx()
+                                detectHorizontalDragGestures(
+                                    onHorizontalDrag = { change, dragAmount ->
+                                        change.consume()
+                                        horizontalDrag += dragAmount
+                                    },
+                                    onDragEnd = {
+                                        when {
+                                            horizontalDrag <= -swipeThreshold -> changeMonth(1)
+                                            horizontalDrag >= swipeThreshold -> changeMonth(-1)
+                                        }
+                                        horizontalDrag = 0f
+                                    },
+                                    onDragCancel = { horizontalDrag = 0f }
+                                )
+                            }
+                    ) {
                         Text(
                             text = monthName(year, month),
                             color = MaterialTheme.colorScheme.onBackground,
@@ -196,8 +223,7 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                         MonthGrid(
                             year = year,
                             month = month,
-                            today = today,
-                            onSwipeMonth = { changeMonth(it) }
+                            today = today
                         )
                     }
                 }
@@ -231,7 +257,7 @@ private fun WeekdayHeader() {
 }
 
 @Composable
-private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int) -> Unit) {
+private fun MonthGrid(year: Int, month: Int, today: Calendar) {
     val firstDay = remember(year, month) { GregorianCalendar(year, month, 1) }
     val leadingEmptyCells = firstDay.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
     val daysInMonth = firstDay.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -239,40 +265,12 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
     val availableWidth = LocalConfiguration.current.screenWidthDp.dp - 56.dp
     val maxWidth = 680.dp - 56.dp
     val cellSize = minOf(availableWidth, maxWidth) / 7f
-    val fontSize = 18.sp
+    val fontSize = 20.sp
     val lunarDates = remember(year, month) {
         (1..daysInMonth).associateWith { day -> lunarDate(year, month, day) }
     }
 
-    Column(
-        modifier = Modifier
-            .semantics {
-                contentDescription = if (Locale.getDefault().language == "zh") {
-                    "日历，左右滑动切换月份"
-                } else {
-                    "Calendar, swipe left or right to change month"
-                }
-            }
-            .pointerInput(year, month) {
-                var horizontalDrag = 0f
-                val swipeThreshold = 80.dp.toPx()
-                detectHorizontalDragGestures(
-                    onHorizontalDrag = { change, dragAmount ->
-                        change.consume()
-                        horizontalDrag += dragAmount
-                    },
-                    onDragEnd = {
-                        when {
-                            horizontalDrag <= -swipeThreshold -> onSwipeMonth(1)
-                            horizontalDrag >= swipeThreshold -> onSwipeMonth(-1)
-                        }
-                        horizontalDrag = 0f
-                    },
-                    onDragCancel = { horizontalDrag = 0f }
-                )
-            },
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         repeat(cellCount / 7) { row ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 repeat(7) { column ->
@@ -283,7 +281,7 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
                         today.get(Calendar.MONTH) == month &&
                         today.get(Calendar.DAY_OF_MONTH) == day
                     Box(
-                        modifier = Modifier.weight(1f).height(64.dp),
+                        modifier = Modifier.weight(1f).height(68.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         if (day in 1..daysInMonth) {
@@ -293,12 +291,12 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().height(42.dp),
+                                    modifier = Modifier.fillMaxWidth().height(44.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Box(
                                         modifier = Modifier
-                                            .size(cellSize.coerceIn(36.dp, 40.dp))
+                                            .size(cellSize.coerceIn(40.dp, 42.dp))
                                             .background(
                                                 if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent,
                                                 CircleShape
@@ -316,15 +314,15 @@ private fun MonthGrid(year: Int, month: Int, today: Calendar, onSwipeMonth: (Int
                                     }
                                 }
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().height(20.dp),
+                                    modifier = Modifier.fillMaxWidth().height(22.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (lunar != null) {
                                         Text(
                                             text = lunar,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            fontSize = 11.sp,
-                                            lineHeight = 16.sp,
+                                            fontSize = 13.sp,
+                                            lineHeight = 18.sp,
                                             textAlign = TextAlign.Center,
                                             maxLines = 1
                                         )
