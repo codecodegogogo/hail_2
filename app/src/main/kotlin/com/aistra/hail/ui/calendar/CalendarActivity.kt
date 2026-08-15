@@ -128,8 +128,7 @@ private fun CalendarScreen(onReveal: () -> Unit) {
     val today = remember { Calendar.getInstance() }
     var visibleYear by rememberSaveable { mutableIntStateOf(today.get(Calendar.YEAR)) }
     var visibleMonth by rememberSaveable { mutableIntStateOf(today.get(Calendar.MONTH)) }
-    var yearTapCount by remember { mutableIntStateOf(0) }
-    var lastYearTap by remember { mutableLongStateOf(0L) }
+    var yearDoubleTapAt by remember { mutableLongStateOf(0L) }
 
     fun changeMonth(offset: Int) {
         val calendar = GregorianCalendar(visibleYear, visibleMonth, 1).apply { add(Calendar.MONTH, offset) }
@@ -150,15 +149,9 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                         .fillMaxWidth()
                         .height(72.dp)
                         .pointerInput(Unit) {
-                            detectTapGestures {
-                                val now = SystemClock.elapsedRealtime()
-                                yearTapCount = if (now - lastYearTap <= 1_200L) yearTapCount + 1 else 1
-                                lastYearTap = now
-                                if (yearTapCount == 3) {
-                                    yearTapCount = 0
-                                    onReveal()
-                                }
-                            }
+                            detectTapGestures(
+                                onDoubleTap = { yearDoubleTapAt = SystemClock.elapsedRealtime() }
+                            )
                         },
                     contentAlignment = Alignment.CenterStart
                 ) {
@@ -212,13 +205,31 @@ private fun CalendarScreen(onReveal: () -> Unit) {
                                 )
                             }
                     ) {
-                        Text(
-                            text = monthName(year, month),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(Modifier.height(24.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp)
+                                .pointerInput(year, month, yearDoubleTapAt) {
+                                    detectTapGestures(
+                                        onDoubleTap = {
+                                            val now = SystemClock.elapsedRealtime()
+                                            val sequenceIsValid = yearDoubleTapAt != 0L &&
+                                                now - yearDoubleTapAt <= 3_000L
+                                            yearDoubleTapAt = 0L
+                                            if (sequenceIsValid) onReveal()
+                                        }
+                                    )
+                                },
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            Text(
+                                text = monthName(year, month),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        Spacer(Modifier.height(16.dp))
                         WeekdayHeader()
                         Spacer(Modifier.height(12.dp))
                         MonthGrid(
