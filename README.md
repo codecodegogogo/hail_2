@@ -1,4 +1,4 @@
-# Hail_2
+# Hail_2（对原版有大改动，请认真阅读readme）
 
 这是基于 [Hail](https://github.com/aistra0528/Hail) 修改的 Android 应用管理工具。默认安装名称为“日历”，包名为 `com.aistra.calendar`。打开应用后先显示日历，完成指定操作才会进入应用管理界面。
 
