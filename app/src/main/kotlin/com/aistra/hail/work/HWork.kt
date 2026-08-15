@@ -13,14 +13,20 @@ object HWork {
     fun cancelWork(name: String) =
         WorkManager.getInstance(app).cancelUniqueWork(name)
 
-    fun setDeferredFrozen(packageName: String, frozen: Boolean = true, minutes: Long) {
+    fun setDeferredFrozen(
+        packageName: String,
+        frozen: Boolean = true,
+        minutes: Long,
+        workingMode: String = HailData.workingMode
+    ) {
         WorkManager.getInstance(app).enqueueUniqueWork(
             packageName,
             ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<FrozenWorker>().setInputData(
                 workDataOf(
                     HailData.KEY_PACKAGE to packageName,
-                    HailData.KEY_FROZEN to frozen
+                    HailData.KEY_FROZEN to frozen,
+                    HailData.WORKING_MODE to workingMode
                 )
             ).setInitialDelay(minutes, TimeUnit.MINUTES).build()
         )

@@ -15,9 +15,11 @@ class AppInfo(
     val applicationInfo: ApplicationInfo? get() = HPackages.getApplicationInfoOrNull(packageName)
     val name get() = applicationInfo?.loadLabel(app.packageManager) ?: packageName
     val state
-        get() = when {
+        get() = state(HailData.workingMode)
+
+    fun state(workingMode: String): State = when {
             applicationInfo == null -> State.NOT_FOUND
-            AppManager.isAppFrozen(packageName) -> State.FROZEN
+            AppManager.isAppFrozen(packageName, workingMode) -> State.FROZEN
             else -> State.UNFROZEN
         }
 

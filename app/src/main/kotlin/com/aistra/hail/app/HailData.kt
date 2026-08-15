@@ -27,6 +27,7 @@ object HailData {
     private const val KEY_ID = "id"
     const val KEY_TAG = "tag"
     private const val KEY_TAGS = "tags"
+    private const val KEY_TAG_WORKING_ACTIONS = "tag_working_actions"
     private const val KEY_PINNED = "pinned"
     private const val KEY_WHITELISTED = "whitelisted"
     const val KEY_PACKAGE = "package"
@@ -131,6 +132,7 @@ object HailData {
     private val dir = "${app.filesDir.path}/v1"
     private val appsPath = "$dir/apps.json"
     private val tagsPath = "$dir/tags.json"
+    private val tagWorkingActionsPath = "$dir/$KEY_TAG_WORKING_ACTIONS.json"
 
     val checkedList: MutableList<AppInfo> by lazy {
         mutableListOf<AppInfo>().apply {
@@ -199,6 +201,48 @@ object HailData {
             tags.forEach {
                 put(JSONObject().put(KEY_TAG, it.first).put(KEY_ID, it.second))
             }
+            toString()
+        })
+    }
+
+    private val tagWorkingActions: MutableMap<Int, String> by lazy {
+        mutableMapOf<Int, String>().apply {
+            runCatching {
+                val json = JSONObject(HFiles.read(tagWorkingActionsPath))
+                json.keys().forEach { tagId ->
+                    val action = json.getString(tagId)
+                    if (action in WORKING_ACTION_VALUES) put(tagId.toInt(), action)
+                }
+            }
+        }
+    }
+
+    fun tagWorkingAction(tagId: Int): String? = tagWorkingActions[tagId]
+
+    fun tagWorkingMode(tagId: Int): String {
+        val permission = workingPermission(workingMode)
+        val action = tagWorkingAction(tagId)
+        return if (action != null && action in supportedWorkingActions(permission)) {
+            permission + action
+        } else workingMode
+    }
+
+    fun setTagWorkingAction(tagId: Int, action: String?) {
+        if (action != null && action in WORKING_ACTION_VALUES) tagWorkingActions[tagId] = action
+        else tagWorkingActions.remove(tagId)
+        saveTagWorkingActions()
+    }
+
+    fun replaceTagWorkingAction(oldTagId: Int, newTagId: Int, action: String?) {
+        tagWorkingActions.remove(oldTagId)
+        if (action != null && action in WORKING_ACTION_VALUES) tagWorkingActions[newTagId] = action
+        saveTagWorkingActions()
+    }
+
+    private fun saveTagWorkingActions() {
+        if (!HFiles.exists(dir)) HFiles.createDirectories(dir)
+        HFiles.write(tagWorkingActionsPath, JSONObject().run {
+            tagWorkingActions.forEach { (tagId, action) -> put(tagId.toString(), action) }
             toString()
         })
     }

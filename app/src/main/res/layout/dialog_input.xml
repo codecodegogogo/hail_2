@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_layout"
@@ -18,4 +19,22 @@
                 android:maxLength="16"/>
 
     </com.google.android.material.textfield.TextInputLayout>
-</FrameLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/working_mode_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_large"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:layout_marginEnd="@dimen/padding_large"
+            android:hint="@string/tag_working_action">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/working_mode_dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>
