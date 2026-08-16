@@ -53,7 +53,7 @@ object IconlessLauncherManager {
                 applicationInfo = info,
                 components = components,
                 hidden = HailData.iconlessLauncherEnabled && record?.hidden == true,
-                operated = record?.hidden == true,
+                operated = record != null,
                 lastOperatedAt = record?.lastOperatedAt ?: 0L,
                 firstInstallTime = packageInfo?.firstInstallTime ?: 0L,
                 lastUpdateTime = packageInfo?.lastUpdateTime ?: 0L
@@ -116,13 +116,7 @@ object IconlessLauncherManager {
         val launched = launchIntent != null && runCatching {
             context.startActivity(launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }.isSuccess
-
-        if (temporarilyVisible) {
-            delay(1200L)
-            if (HailData.iconlessLauncherEnabled && entry(appInfo.packageName)?.hidden == true) {
-                setEntryComponentsEnabledWithoutKilling(record, false)
-            }
-        }
+        if (!launched && temporarilyVisible) setEntryComponentsEnabled(record, false)
         return launched
     }
 
