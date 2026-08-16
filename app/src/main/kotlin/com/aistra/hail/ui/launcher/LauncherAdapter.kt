@@ -36,8 +36,8 @@ class LauncherAdapter(
         fun bind(appInfo: IconlessLauncherApp) {
             binding.appName.text = appInfo.label
             binding.visibilityAction.setImageResource(
-                if (appInfo.hidden) R.drawable.ic_iconfont_visibility
-                else R.drawable.ic_iconfont_visibility_off
+                if (appInfo.hidden) R.drawable.ic_iconfont_visibility_off
+                else R.drawable.ic_iconfont_visibility
             )
             binding.visibilityAction.contentDescription = binding.root.context.getString(
                 if (appInfo.hidden) R.string.action_show_launcher_icon
