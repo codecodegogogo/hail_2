@@ -3,6 +3,7 @@ package com.aistra.hail.utils
 import android.content.ComponentName
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.aistra.hail.HailApp.Companion.app
 
 object HShell {
     private fun getCurrentUserId(): Int = execSU("am get-current-user").second?.trim()?.toIntOrNull() ?: 0
@@ -29,11 +30,25 @@ object HShell {
         execSU("pm ${if (disabled) "disable" else "enable"} $userArg $packageName").first == 0
 
     fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean {
+        if (setComponentEnabledWithoutKilling(componentName, enabled)) return true
+
         val result = execSU(
             "pm ${if (enabled) "enable" else "disable"} $userArg ${componentName.flattenToString()}"
         )
         return result.first == 0 && HPackages.isComponentEnabled(componentName) == enabled
     }
+
+    fun setComponentEnabledWithoutKilling(componentName: ComponentName, enabled: Boolean): Boolean {
+        val commandClass = ComponentStateCommand::class.java.name
+        val result = execSU(
+            "CLASSPATH=${shellQuote(app.applicationInfo.sourceDir)} app_process /system/bin $commandClass " +
+                "${shellQuote(componentName.packageName)} ${shellQuote(componentName.className)} " +
+                "$enabled ${HPackages.myUserId}"
+        )
+        return result.first == 0 && HPackages.isComponentEnabled(componentName) == enabled
+    }
+
+    private fun shellQuote(value: String) = "'" + value.replace("'", "'\\''") + "'"
 
     fun setAppHidden(packageName: String, hidden: Boolean): Boolean =
         execSU("pm ${if (hidden) "hide" else "unhide"} $userArg $packageName").first == 0

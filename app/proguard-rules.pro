@@ -25,3 +25,7 @@
 -keep,allowoptimization,allowobfuscation public class * extends io.github.libxposed.api.XposedModule {
     public <init>();
 }
+
+-keep class com.aistra.hail.utils.ComponentStateCommand {
+    public static void main(java.lang.String[]);
+}

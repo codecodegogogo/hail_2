@@ -91,9 +91,19 @@ object HShizuku {
     }
 
     fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean {
+        if (setComponentEnabledWithoutKilling(componentName, enabled)) return true
+
+        val result = execute(
+            "pm ${if (enabled) "enable" else "disable"} --user ${HPackages.myUserId} " +
+                componentName.flattenToString()
+        )
+        return result.first == 0 && HPackages.isComponentEnabled(componentName) == enabled
+    }
+
+    fun setComponentEnabledWithoutKilling(componentName: ComponentName, enabled: Boolean): Boolean {
         val state = if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
         else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        val changedWithoutKilling = runCatching {
+        return runCatching {
             val pm = asInterface("android.content.pm.IPackageManager", "package")
             pm::class.java.getMethod(
                 "setComponentEnabledSetting",
@@ -115,13 +125,6 @@ object HShizuku {
             HLog.e(it)
             false
         }
-        if (changedWithoutKilling) return true
-
-        val result = execute(
-            "pm ${if (enabled) "enable" else "disable"} --user ${HPackages.myUserId} " +
-                componentName.flattenToString()
-        )
-        return result.first == 0 && HPackages.isComponentEnabled(componentName) == enabled
     }
 
     fun setAppHidden(packageName: String, hidden: Boolean): Boolean {

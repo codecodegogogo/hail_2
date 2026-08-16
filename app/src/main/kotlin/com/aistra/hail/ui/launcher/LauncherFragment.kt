@@ -64,7 +64,10 @@ class LauncherFragment : MainFragment(), MenuProvider {
 
     override fun onResume() {
         super.onResume()
-        model.updateAppList()
+        viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO) { IconlessLauncherManager.reapplyHiddenIcons() }
+            model.updateAppList()
+        }
     }
 
     private fun changeIconVisibility(appInfo: IconlessLauncherApp) {

@@ -74,6 +74,15 @@ object IconlessLauncherManager {
         return true
     }
 
+    fun reapplyHiddenIcons() {
+        if (!HailData.iconlessLauncherEnabled) return
+        entries().filter { it.hidden }.forEach { entry ->
+            if (HPackages.getApplicationInfoOrNull(entry.packageName) != null) {
+                setEntryComponentsEnabledWithoutKilling(entry, false)
+            }
+        }
+    }
+
     fun setIconHidden(appInfo: IconlessLauncherApp, hidden: Boolean): Boolean {
         if (!HailData.iconlessLauncherEnabled) return false
         val existing = entry(appInfo.packageName)
@@ -111,7 +120,7 @@ object IconlessLauncherManager {
         if (temporarilyVisible) {
             delay(1200L)
             if (HailData.iconlessLauncherEnabled && entry(appInfo.packageName)?.hidden == true) {
-                setEntryComponentsEnabled(record, false)
+                setEntryComponentsEnabledWithoutKilling(record, false)
             }
         }
         return launched
@@ -139,9 +148,33 @@ object IconlessLauncherManager {
         return changed.isNotEmpty()
     }
 
+    private fun setEntryComponentsEnabledWithoutKilling(
+        entry: IconlessLauncherEntry,
+        enabled: Boolean
+    ): Boolean {
+        val changed = mutableListOf<ComponentName>()
+        for (flattenedComponent in entry.components) {
+            val component = ComponentName.unflattenFromString(flattenedComponent) ?: continue
+            if (!setComponentEnabledWithoutKilling(component, enabled)) {
+                changed.asReversed().forEach { setComponentEnabledWithoutKilling(it, !enabled) }
+                return false
+            }
+            changed += component
+        }
+        return changed.isNotEmpty()
+    }
+
     private fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean = when {
         HailData.workingMode.startsWith(HailData.SU) -> HShell.setComponentEnabled(componentName, enabled)
         HailData.workingMode.startsWith(HailData.SHIZUKU) -> HShizuku.setComponentEnabled(componentName, enabled)
+        HailData.workingMode.startsWith(HailData.PRIVAPP) -> HPackages.setComponentEnabled(componentName, enabled)
+        else -> false
+    }
+
+    private fun setComponentEnabledWithoutKilling(componentName: ComponentName, enabled: Boolean): Boolean = when {
+        HailData.workingMode.startsWith(HailData.SU) -> HShell.setComponentEnabledWithoutKilling(componentName, enabled)
+        HailData.workingMode.startsWith(HailData.SHIZUKU) ->
+            HShizuku.setComponentEnabledWithoutKilling(componentName, enabled)
         HailData.workingMode.startsWith(HailData.PRIVAPP) -> HPackages.setComponentEnabled(componentName, enabled)
         else -> false
     }
