@@ -201,7 +201,7 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="title_iconless_launcher">Iconless app launcher</string>
-    <string name="iconless_launcher_enabled">Iconless app launcher</string>
+    <string name="iconless_launcher_enabled">Enabled</string>
     <string name="iconless_launcher_management">Management page</string>
     <string name="iconless_launcher_empty">No launchable apps</string>
     <string name="iconless_launcher_enable_first">Enable the iconless app launcher first</string>

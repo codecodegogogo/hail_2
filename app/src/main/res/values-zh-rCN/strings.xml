@@ -202,7 +202,7 @@
     <string name="app_theme">应用主题</string>
     <string name="follow_system">跟随系统</string>
     <string name="title_iconless_launcher">无图标应用启动器</string>
-    <string name="iconless_launcher_enabled">无图标应用启动器</string>
+    <string name="iconless_launcher_enabled">是否启用</string>
     <string name="iconless_launcher_management">管理页面</string>
     <string name="iconless_launcher_empty">没有可启动的应用</string>
     <string name="iconless_launcher_enable_first">请先启用无图标应用启动器</string>

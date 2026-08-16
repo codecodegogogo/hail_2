@@ -110,29 +110,6 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 titleId = R.string.calendar_disguise,
                 icon = null
             )
-            switchPreference(
-                key = HailData.ICONLESS_LAUNCHER_ENABLED,
-                defaultValue = false,
-                onValueChange = { state, value ->
-                    lifecycleScope.launch {
-                        val success = withContext(Dispatchers.IO) {
-                            IconlessLauncherManager.setFeatureEnabled(value)
-                        }
-                        if (success) state.value = value
-                        else HUI.showToast(R.string.iconless_launcher_operation_failed)
-                    }
-                    false
-                },
-                titleId = R.string.iconless_launcher_enabled,
-                icon = null
-            )
-            item(key = "iconless_launcher_management", contentType = "Preference") {
-                Preference(
-                    title = { Text(text = stringResource(R.string.iconless_launcher_management)) },
-                    icon = { Spacer(modifier = Modifier.size(24.dp)) },
-                    onClick = { findNavController().navigate(R.id.nav_iconless_launcher) }
-                )
-            }
             listPreference(
                 key = HailData.APP_THEME,
                 defaultValue = HailData.FOLLOW_SYSTEM,
@@ -160,6 +137,34 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 titleId = R.string.fuzzy_search,
                 icon = Icons.AutoMirrored.Outlined.ManageSearch
             )
+            horizontalDivider()
+            preferenceCategory(
+                key = "iconless_launcher",
+                title = { Text(text = stringResource(R.string.title_iconless_launcher)) }
+            )
+            switchPreference(
+                key = HailData.ICONLESS_LAUNCHER_ENABLED,
+                defaultValue = false,
+                onValueChange = { state, value ->
+                    lifecycleScope.launch {
+                        val success = withContext(Dispatchers.IO) {
+                            IconlessLauncherManager.setFeatureEnabled(value)
+                        }
+                        if (success) state.value = value
+                        else HUI.showToast(R.string.iconless_launcher_operation_failed)
+                    }
+                    false
+                },
+                titleId = R.string.iconless_launcher_enabled,
+                icon = null
+            )
+            item(key = "iconless_launcher_management", contentType = "Preference") {
+                Preference(
+                    title = { Text(text = stringResource(R.string.iconless_launcher_management)) },
+                    icon = { Spacer(modifier = Modifier.size(24.dp)) },
+                    onClick = { findNavController().navigate(R.id.nav_iconless_launcher) }
+                )
+            }
             horizontalDivider()
             preferenceCategory(key = "auto_operation", title = { Text(text = stringResource(R.string.auto_operation)) })
             switchPreference(
