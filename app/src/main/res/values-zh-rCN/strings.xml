@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calendar_name">日历</string>
+    <string name="calendar_name">万年历</string>
     <string name="app_name">雹</string>
     <string name="app_slogan">实现冻结自由！</string>
     <string name="title_home">首页</string>

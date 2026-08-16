@@ -30,7 +30,7 @@
             android:name=".HailApp"
             android:allowBackup="true"
             android:enableOnBackInvokedCallback="true"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/ic_calendar_launcher"
             android:label="@string/calendar_name"
             android:description="@string/xposed_description"
             android:supportsRtl="true"
@@ -54,7 +54,7 @@
                 android:name="com.aistra.hail.ui.calendar.CalendarLauncher"
                 android:enabled="true"
                 android:exported="true"
-                android:icon="@mipmap/ic_launcher"
+                android:icon="@drawable/ic_calendar_launcher"
                 android:label="@string/calendar_name"
                 android:targetActivity=".ui.calendar.CalendarActivity">
             <intent-filter>

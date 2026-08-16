@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calendar_name">Calendar</string>
+    <string name="calendar_name">万年历</string>
     <string name="app_name">Hail</string>
     <string name="app_slogan">Freezedom!</string>
     <string name="title_home">Home</string>
