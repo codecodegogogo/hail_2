@@ -11,6 +11,7 @@ import org.json.JSONObject
 
 object HailData {
     const val URL_WHY_FREE_SOFTWARE = "https://www.gnu.org/philosophy/free-software-even-more-important.html"
+    const val URL_GITHUB_HAIL_2 = "https://github.com/codecodegogogo/hail_2"
     const val URL_GITHUB = "https://github.com/aistra0528/Hail"
     const val URL_README = "$URL_GITHUB#readme"
     const val URL_RELEASES = "$URL_GITHUB/releases"

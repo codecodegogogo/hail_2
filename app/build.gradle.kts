@@ -21,8 +21,8 @@ android {
         applicationId = "com.aistra.calendar"
         minSdk = 23
         targetSdk = 36
-        versionCode = 34
-        versionName = "1.10.0"
+        versionCode = 1
+        versionName = "v1.0"
     }
 
     buildTypes {

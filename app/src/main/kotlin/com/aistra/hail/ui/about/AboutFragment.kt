@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -79,7 +78,7 @@ class AboutFragment : MainFragment() {
                         contentScale = ContentScale.None
                     )
                     Text(
-                        text = stringResource(R.string.app_name), style = MaterialTheme.typography.bodyLarge
+                        text = stringResource(R.string.about_project_name), style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
                         text = stringResource(R.string.app_slogan), style = MaterialTheme.typography.bodyMedium
@@ -100,26 +99,19 @@ class AboutFragment : MainFragment() {
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
             OutlinedCard(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))) {
                 ClickableItem(
-                    icon = Icons.AutoMirrored.Filled.Send, title = R.string.action_telegram
-                ) { HUI.openLink(HailData.URL_TELEGRAM) }
-                ClickableItem(
-                    icon = Icons.Outlined.Group, title = R.string.action_qq
-                ) { HUI.openLink(HailData.URL_QQ) }
-                ClickableItem(
-                    icon = Icons.Outlined.LocalMall, title = R.string.action_fdroid
-                ) { HUI.openLink(HailData.URL_FDROID) }
-                ClickableItem(
-                    icon = Icons.Outlined.CardGiftcard, title = R.string.action_donate, onClick = ::openDonateDialog
+                    icon = Icons.Outlined.CardGiftcard,
+                    title = R.string.action_hail_donate,
+                    onClick = ::openDonateDialog
                 )
             }
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
             OutlinedCard(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))) {
                 ClickableItem(
-                    icon = Icons.Outlined.Code, title = R.string.action_github
-                ) { HUI.openLink(HailData.URL_GITHUB) }
+                    icon = Icons.Outlined.Code, title = R.string.action_hail_2_github
+                ) { HUI.openLink(HailData.URL_GITHUB_HAIL_2) }
                 ClickableItem(
-                    icon = Icons.Outlined.Translate, title = R.string.action_translate
-                ) { HUI.openLink(HailData.URL_TRANSLATE) }
+                    icon = Icons.Outlined.Code, title = R.string.action_hail_github
+                ) { HUI.openLink(HailData.URL_GITHUB) }
                 ClickableItem(
                     icon = Icons.Outlined.Description, title = R.string.action_licenses
                 ) { openLicenseDialog = true }

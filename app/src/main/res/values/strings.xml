@@ -3,6 +3,10 @@
     <string name="calendar_name">万年历</string>
     <string name="app_name">Hail</string>
     <string name="app_slogan">Freezedom!</string>
+    <string name="about_project_name">hail_2</string>
+    <string name="action_hail_donate">给雹的原作者捐赠</string>
+    <string name="action_hail_2_github">hail_2 GitHub</string>
+    <string name="action_hail_github">雹 GitHub</string>
     <string name="title_home">Home</string>
     <string name="title_apps">Apps</string>
     <string name="action_add_operation_apps">Add apps to operate</string>
