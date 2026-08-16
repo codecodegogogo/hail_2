@@ -90,28 +90,38 @@ object HShizuku {
         return HPackages.isAppDisabled(packageName) == disabled
     }
 
-    fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean = runCatching {
-        val pm = asInterface("android.content.pm.IPackageManager", "package")
-        pm::class.java.getMethod(
-            "setComponentEnabledSetting",
-            ComponentName::class.java,
-            Int::class.java,
-            Int::class.java,
-            Int::class.java,
-            String::class.java
-        ).invoke(
-            pm,
-            componentName,
-            if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP,
-            HPackages.myUserId,
-            callerPackage
+    fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean {
+        val state = if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+        else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        val changedWithoutKilling = runCatching {
+            val pm = asInterface("android.content.pm.IPackageManager", "package")
+            pm::class.java.getMethod(
+                "setComponentEnabledSetting",
+                ComponentName::class.java,
+                Int::class.java,
+                Int::class.java,
+                Int::class.java,
+                String::class.java
+            ).invoke(
+                pm,
+                componentName,
+                state,
+                PackageManager.DONT_KILL_APP,
+                HPackages.myUserId,
+                callerPackage
+            )
+            HPackages.isComponentEnabled(componentName) == enabled
+        }.getOrElse {
+            HLog.e(it)
+            false
+        }
+        if (changedWithoutKilling) return true
+
+        val result = execute(
+            "pm ${if (enabled) "enable" else "disable"} --user ${HPackages.myUserId} " +
+                componentName.flattenToString()
         )
-        true
-    }.getOrElse {
-        HLog.e(it)
-        false
+        return result.first == 0 && HPackages.isComponentEnabled(componentName) == enabled
     }
 
     fun setAppHidden(packageName: String, hidden: Boolean): Boolean {

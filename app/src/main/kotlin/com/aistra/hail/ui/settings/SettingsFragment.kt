@@ -92,14 +92,14 @@ class SettingsFragment : MainFragment(), MenuProvider {
         val autoFreezeAfterLock = rememberPreferenceState(HailData.AUTO_FREEZE_AFTER_LOCK, false)
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             workingModePreferences(workingMode)
+            horizontalDivider()
+            preferenceCategory(key = "customize", title = { Text(text = stringResource(R.string.title_customize)) })
             switchPreference(
                 key = HailData.BIOMETRIC_LOGIN,
                 defaultValue = false,
                 titleId = R.string.action_biometric,
                 icon = Icons.Outlined.Fingerprint
             )
-            horizontalDivider()
-            preferenceCategory(key = "customize", title = { Text(text = stringResource(R.string.title_customize)) })
             switchPreference(
                 key = HailData.CALENDAR_DISGUISE,
                 defaultValue = true,
@@ -272,6 +272,13 @@ class SettingsFragment : MainFragment(), MenuProvider {
                 summary = { Text(text = stringResource(action.workingActionTitleId())) },
                 type = ListPreferenceType.ALERT_DIALOG,
                 valueToText = { AnnotatedString(getString(it.workingActionTitleId())) }
+            )
+        }
+        item(key = "add_operation_apps", contentType = "Preference") {
+            Preference(
+                title = { Text(text = stringResource(R.string.action_add_operation_apps)) },
+                icon = { Spacer(modifier = Modifier.size(24.dp)) },
+                onClick = { findNavController().navigate(R.id.nav_apps) }
             )
         }
     }

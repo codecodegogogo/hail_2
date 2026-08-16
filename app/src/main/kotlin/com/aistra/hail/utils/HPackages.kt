@@ -108,11 +108,30 @@ object HPackages {
             else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
-        true
+        isComponentEnabled(componentName) == enabled
     }.getOrElse {
         HLog.e(it)
         false
     }
+
+    fun isComponentEnabled(componentName: ComponentName): Boolean = runCatching {
+        when (app.packageManager.getComponentEnabledSetting(componentName)) {
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED -> true
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED -> false
+            else -> {
+                if (HTarget.T) app.packageManager.getActivityInfo(
+                    componentName,
+                    PackageManager.ComponentInfoFlags.of(PackageManager.MATCH_DISABLED_COMPONENTS.toLong())
+                ).enabled
+                else app.packageManager.getActivityInfo(
+                    componentName,
+                    PackageManager.MATCH_DISABLED_COMPONENTS
+                ).enabled
+            }
+        }
+    }.getOrDefault(false)
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun setAppRestricted(packageName: String, restricted: Boolean): Boolean = runCatching {

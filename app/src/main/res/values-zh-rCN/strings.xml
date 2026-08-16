@@ -5,6 +5,7 @@
     <string name="app_slogan">实现冻结自由！</string>
     <string name="title_home">首页</string>
     <string name="title_apps">应用</string>
+    <string name="action_add_operation_apps">添加操作应用</string>
     <string name="title_settings">设置</string>
     <string name="title_about">关于</string>
     <string name="title_other">其他</string>
