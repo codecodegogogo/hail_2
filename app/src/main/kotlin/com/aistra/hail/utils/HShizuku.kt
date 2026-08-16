@@ -2,6 +2,7 @@ package com.aistra.hail.utils
 
 import android.annotation.SuppressLint
 import android.app.AppOpsManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -87,6 +88,30 @@ object HShizuku {
             HLog.e(it)
         }
         return HPackages.isAppDisabled(packageName) == disabled
+    }
+
+    fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean = runCatching {
+        val pm = asInterface("android.content.pm.IPackageManager", "package")
+        pm::class.java.getMethod(
+            "setComponentEnabledSetting",
+            ComponentName::class.java,
+            Int::class.java,
+            Int::class.java,
+            Int::class.java,
+            String::class.java
+        ).invoke(
+            pm,
+            componentName,
+            if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP,
+            HPackages.myUserId,
+            callerPackage
+        )
+        true
+    }.getOrElse {
+        HLog.e(it)
+        false
     }
 
     fun setAppHidden(packageName: String, hidden: Boolean): Boolean {

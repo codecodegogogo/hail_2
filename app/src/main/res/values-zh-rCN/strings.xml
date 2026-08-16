@@ -201,4 +201,18 @@
     <string name="theme_dark">深色</string>
     <string name="app_theme">应用主题</string>
     <string name="follow_system">跟随系统</string>
+    <string name="title_iconless_launcher">无图标应用启动器</string>
+    <string name="iconless_launcher_enabled">无图标应用启动器</string>
+    <string name="iconless_launcher_management">管理页面</string>
+    <string name="iconless_launcher_empty">没有可启动的应用</string>
+    <string name="iconless_launcher_enable_first">请先启用无图标应用启动器</string>
+    <string name="iconless_launcher_operation_failed">当前权限无法更改应用桌面图标</string>
+    <string name="iconless_launcher_launch_failed">无法启动此应用</string>
+    <string name="iconless_launcher_icon_hidden">已取消桌面图标：%1$s</string>
+    <string name="iconless_launcher_icon_shown">已显示桌面图标：%1$s</string>
+    <string name="action_hide_launcher_icon">取消桌面图标</string>
+    <string name="action_show_launcher_icon">显示桌面图标</string>
+    <string name="action_launch_app">启动应用</string>
+    <string name="filter_hidden_launcher_apps">已取消图标</string>
+    <string name="filter_visible_launcher_apps">显示图标</string>
 </resources>

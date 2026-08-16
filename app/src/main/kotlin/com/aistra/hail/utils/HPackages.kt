@@ -2,6 +2,7 @@ package com.aistra.hail.utils
 
 import android.app.ActivityManager
 import android.app.AppOpsManager
+import android.content.ComponentName
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
@@ -98,6 +99,19 @@ object HPackages {
             HLog.e(it)
         }
         return isAppDisabled(packageName) == disabled
+    }
+
+    fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean = runCatching {
+        app.packageManager.setComponentEnabledSetting(
+            componentName,
+            if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+        true
+    }.getOrElse {
+        HLog.e(it)
+        false
     }
 
     @RequiresApi(Build.VERSION_CODES.P)

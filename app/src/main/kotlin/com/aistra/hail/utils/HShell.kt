@@ -1,5 +1,6 @@
 package com.aistra.hail.utils
 
+import android.content.ComponentName
 import android.os.Build
 import androidx.annotation.RequiresApi
 
@@ -26,6 +27,11 @@ object HShell {
 
     fun setAppDisabled(packageName: String, disabled: Boolean): Boolean =
         execSU("pm ${if (disabled) "disable" else "enable"} $userArg $packageName").first == 0
+
+    fun setComponentEnabled(componentName: ComponentName, enabled: Boolean): Boolean =
+        execSU(
+            "pm ${if (enabled) "enable" else "disable"} $userArg --dont-kill-app ${componentName.flattenToString()}"
+        ).first == 0
 
     fun setAppHidden(packageName: String, hidden: Boolean): Boolean =
         execSU("pm ${if (hidden) "hide" else "unhide"} $userArg $packageName").first == 0

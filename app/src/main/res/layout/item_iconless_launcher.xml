@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="8dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/app_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        tools:text="示例应用" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/visibility_action"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        android:src="@drawable/ic_iconfont_visibility_off"
+        app:tint="?attr/colorControlNormal" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/launch_action"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        android:src="@drawable/ic_iconfont_launch"
+        app:tint="?attr/colorControlNormal" />
+</LinearLayout>

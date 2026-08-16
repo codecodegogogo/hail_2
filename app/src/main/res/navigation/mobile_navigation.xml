@@ -21,6 +21,12 @@
         android:label="@string/title_settings" />
 
     <fragment
+        android:id="@+id/nav_iconless_launcher"
+        android:name="com.aistra.hail.ui.launcher.LauncherFragment"
+        android:label="@string/title_iconless_launcher"
+        tools:layout="@layout/fragment_iconless_launcher" />
+
+    <fragment
         android:id="@+id/nav_about"
         android:name="com.aistra.hail.ui.about.AboutFragment"
         android:label="@string/title_about"
