@@ -72,6 +72,7 @@
     <string name="msg_uninstall">Do you want to uninstall this app?</string>
     <string name="working_mode">Working mode</string>
     <string name="working_permission">Permission</string>
+    <string name="restore_apps_before_switching_mode">Before switching permission or mode, restore all app operations first.</string>
     <string name="working_permission_shizuku">Shizuku</string>
     <string name="working_permission_root">Root</string>
     <string name="working_permission_dhizuku">Dhizuku</string>

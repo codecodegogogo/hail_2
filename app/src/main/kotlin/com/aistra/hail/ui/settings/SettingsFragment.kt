@@ -398,12 +398,33 @@ class SettingsFragment : MainFragment(), MenuProvider {
 
     private fun updateWorkingMode(rememberState: MutableState<String>, mode: String) {
         if (mode == rememberState.value) return
+        if (hasUnrestoredAppOperations()) {
+            showRestoreAppsBeforeSwitchingDialog()
+            return
+        }
         if (canUseWorkingMode(rememberState, mode)) commitWorkingMode(rememberState, mode)
     }
 
     private fun commitWorkingMode(rememberState: MutableState<String>, mode: String) {
+        if (hasUnrestoredAppOperations()) {
+            showRestoreAppsBeforeSwitchingDialog()
+            return
+        }
         rememberState.value = mode
         activity.invalidateOptionsMenu()
+    }
+
+    private fun hasUnrestoredAppOperations(): Boolean =
+        HailData.checkedList.any { AppManager.isAppFrozen(it.packageName, HailData.MODE_DEFAULT) } ||
+            (HailData.iconlessLauncherEnabled && HailData.iconlessLauncherEntries.any {
+                it.hidden && HPackages.getApplicationInfoOrNull(it.packageName) != null
+            })
+
+    private fun showRestoreAppsBeforeSwitchingDialog() {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setMessage(R.string.restore_apps_before_switching_mode)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     private fun canUseWorkingMode(rememberState: MutableState<String>, mode: String): Boolean {
